@@ -1,9 +1,9 @@
 <header class="header">
   <div class="header-content">
-    <div class="logo-container">
+    <a routerLink="/" class="logo-container">
       <img src="logo.png" alt="Edge Customs Logo" class="logo" />
       <span class="brand-name">Edge Customs</span>
-    </div>
+    </a>
 
     <!-- Mobile Menu Toggle -->
     <button class="mobile-menu-toggle" (click)="toggleMobileMenu()" [class.active]="isMobileMenuOpen">
@@ -18,9 +18,7 @@
         <li class="nav-item">
           <a routerLink="/" class="nav-link">Home</a>
         </li>
-        <li class="nav-item">
-          <a href="#about" class="nav-link">About Us</a>
-        </li>
+
         <li class="nav-item has-submenu" [class.expanded]="isServicesExpanded">
           <button class="nav-link services-toggle" (click)="toggleServices($event)">
             Services
@@ -34,8 +32,8 @@
               </button>
               <!-- Desktop only: inline subservices -->
               <div class="subservices-container desktop-only" [class.show]="expandedService === 'serviceA'">
-                <a href="#service-a1" class="nested-link">Ceramic Coating</a>
-                <a href="#service-a2" class="nested-link">Graphene Coating</a>
+                <a routerLink="/services/ppf" fragment="ceramic" class="nested-link">Ceramic Coating</a>
+                <a routerLink="/services/ppf" fragment="graphene" class="nested-link">Graphene Coating</a>
               </div>
             </li>
             <li class="submenu-item" [class.expanded]="expandedService === 'serviceB'">
@@ -45,9 +43,9 @@
               </button>
               <!-- Desktop only: inline subservices -->
               <div class="subservices-container desktop-only" [class.show]="expandedService === 'serviceB'">
-                <a href="#service-b1" class="nested-link">Vinyl</a>
-                <a href="#service-b2" class="nested-link">TPH(Thermoplastic Polyolefin)</a>
-                <a href="#service-b3" class="nested-link">TPU(Thermoplastic Polyurethane)</a>
+                <a routerLink="/services/wrapping" fragment="matte" class="nested-link">Matte</a>
+                <a routerLink="/services/wrapping" fragment="gloss" class="nested-link">Gloss & Satin</a>
+                <a routerLink="/services/wrapping" fragment="custom" class="nested-link">Custom</a>
               </div>
             </li>
             <li class="submenu-item" [class.expanded]="expandedService === 'serviceC'">
@@ -57,36 +55,34 @@
               </button>
               <!-- Desktop only: inline subservices -->
               <div class="subservices-container desktop-only" [class.show]="expandedService === 'serviceC'">
-                <a href="#service-c1" class="nested-link">Interior Detailing</a>
-                <a href="#service-c2" class="nested-link">Engine Bay Detailing</a>
-                <a href="#service-c3" class="nested-link">Headlight Restoration</a>
-                <a href="#service-c4" class="nested-link">Wheel & Caliper Coating</a>
-                <a href="#service-c5" class="nested-link">Headlight Restoration</a>
+                <a routerLink="/services/detailing" fragment="interior" class="nested-link">Interior Detailing</a>
+                <a routerLink="/services/detailing" fragment="engine" class="nested-link">Engine Bay Detailing</a>
+                <a routerLink="/services/detailing" fragment="headlight" class="nested-link">Headlight Restoration</a>
+                <a routerLink="/services/detailing" fragment="wheels" class="nested-link">Wheel & Caliper Coating</a>
               </div>
             </li>
             <!-- Mobile only: shared subservices container at bottom -->
             <li class="mobile-subservices-container" [class.show]="expandedService">
               @if (expandedService === 'serviceA') {
-                <a href="#service-a1" class="nested-link">Ceramic Coating</a>
-                <a href="#service-a2" class="nested-link">Graphene Coating</a>
+                <a routerLink="/services/ppf" fragment="ceramic" class="nested-link">Ceramic Coating</a>
+                <a routerLink="/services/ppf" fragment="graphene" class="nested-link">Graphene Coating</a>
               }
               @if (expandedService === 'serviceB') {
-                <a href="#service-b1" class="nested-link">Vinyl</a>
-                <a href="#service-b2" class="nested-link">TPH(Thermoplastic Polyolefin)</a>
-                <a href="#service-b3" class="nested-link">TPU(Thermoplastic Polyurethane)</a>
+                <a routerLink="/services/wrapping" fragment="matte" class="nested-link">Matte</a>
+                <a routerLink="/services/wrapping" fragment="gloss" class="nested-link">Gloss & Satin</a>
+                <a routerLink="/services/wrapping" fragment="custom" class="nested-link">Custom</a>
               }
               @if (expandedService === 'serviceC') {
-                <a href="#service-c1" class="nested-link">Interior Detailing</a>
-                <a href="#service-c2" class="nested-link">Engine Bay Detailing</a>
-                <a href="#service-c3" class="nested-link">Headlight Restoration</a>
-                <a href="#service-c4" class="nested-link">Wheel & Caliper Coating</a>
-                <a href="#service-c5" class="nested-link">Headlight Restoration</a>
+                <a routerLink="/services/detailing" fragment="interior" class="nested-link">Interior Detailing</a>
+                <a routerLink="/services/detailing" fragment="engine" class="nested-link">Engine Bay Detailing</a>
+                <a routerLink="/services/detailing" fragment="headlight" class="nested-link">Headlight Restoration</a>
+                <a routerLink="/services/detailing" fragment="wheels" class="nested-link">Wheel & Caliper Coating</a>
               }
             </li>
           </ul>
         </li>
         <li class="nav-item">
-          <a href="#contact" class="nav-link contact-btn">Contact Us</a>
+          <a [routerLink]="[]" fragment="contact" class="nav-link contact-btn">Contact Us</a>
         </li>
       </ul>
     </nav>
@@ -97,7 +93,7 @@
   <router-outlet />
 
   <!-- Footer Section -->
-  <footer class="footer">
+  <footer class="footer" id="contact">
     <div class="footer-content">
       <div class="footer-map">
         <h3 class="footer-title">Find Us</h3>

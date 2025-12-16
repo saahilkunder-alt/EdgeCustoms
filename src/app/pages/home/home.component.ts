@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { UiService } from '../../services/ui.service';
 import { RouterLink } from '@angular/router';
 
 interface HeroSlide {
@@ -50,6 +51,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ];
   currentSlideIndex = 0;
   private slideInterval: any;
+  private uiService = inject(UiService);
 
   ngOnInit(): void {
     this.startSlideshow();
@@ -76,6 +78,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   openServicesMenu(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    this.uiService.triggerOpenServices();
   }
 }
