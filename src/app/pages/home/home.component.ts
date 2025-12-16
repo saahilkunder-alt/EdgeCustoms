@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef, inject } from '@angular/core';
 import { UiService } from '../../services/ui.service';
 import { RouterLink } from '@angular/router';
 
@@ -13,7 +13,9 @@ interface HeroSlide {
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy, AfterViewInit {
+  @ViewChild('mechanicVideo') mechanicVideo!: ElementRef<HTMLVideoElement>;
+
   // Hero carousel
   heroSlides: HeroSlide[] = [
     {
@@ -47,7 +49,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         { text: 'SHINE.', color: 'white' },
         { text: 'IMPRESS.', color: 'green' }
       ]
-    }
+    },
   ];
   currentSlideIndex = 0;
   private slideInterval: any;
@@ -55,6 +57,15 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.startSlideshow();
+  }
+
+  ngAfterViewInit(): void {
+    if (this.mechanicVideo && this.mechanicVideo.nativeElement) {
+      this.mechanicVideo.nativeElement.muted = true;
+      this.mechanicVideo.nativeElement.play().catch(err => {
+        console.warn('Video autoplay failed:', err);
+      });
+    }
   }
 
   ngOnDestroy(): void {
