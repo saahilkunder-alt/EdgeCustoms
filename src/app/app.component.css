@@ -793,6 +793,11 @@
   }
 }
 
+/* Mobile-only hint - hidden by default on desktop */
+.mobile-back-hint {
+  display: none !important;
+}
+
 /* Responsive Styles */
 @media screen and (max-width: 900px) {
   .mobile-menu-toggle {
@@ -896,14 +901,33 @@
     flex: 1 1 30%;
     min-width: 90px;
     max-width: 110px;
+    transition: opacity 0.3s ease, max-height 0.3s ease, margin 0.3s ease, padding 0.3s ease;
+  }
+
+  /* Hide non-expanded items when any service is expanded */
+  .submenu:has(.submenu-item.expanded) .submenu-item:not(.expanded):not(.mobile-subservices-container) {
+    display: none !important;
+  }
+
+  /* When a service is expanded, switch to column layout for perfect centering */
+  .submenu:has(.submenu-item.expanded) {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
   }
 
   .submenu-item.expanded {
-    order: 0;
+    flex: 0 0 auto;
+    min-width: 120px;
+    max-width: 140px;
+    width: auto;
   }
 
   .submenu-item.expanded .submenu-link {
     border-color: rgba(173, 255, 47, 0.5);
+    background: rgba(173, 255, 47, 0.15);
+    min-height: 80px;
+    font-size: 0.8rem;
   }
 
   /* Hide desktop-only subservices on mobile */
@@ -911,18 +935,18 @@
     display: none !important;
   }
 
-  /* Mobile subservices container - single box at bottom */
+  /* Mobile subservices container - shows below the expanded service */
   .mobile-subservices-container {
-    flex-basis: 100%;
-    width: 100%;
-    order: 99;
+    flex-basis: auto;
+    width: auto;
+    max-width: 95%;
     display: none !important;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     gap: 0.5rem;
     padding: 0;
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
     box-sizing: border-box;
     list-style: none;
   }
@@ -930,9 +954,9 @@
   .mobile-subservices-container.show {
     display: flex !important;
     background: rgba(20, 20, 20, 0.95);
-    border: 1px solid rgba(173, 255, 47, 0.2);
+    border: 1px solid rgba(173, 255, 47, 0.3);
     border-radius: 12px;
-    padding: 0.5rem 0.75rem;
+    padding: 0.75rem 1rem;
   }
 
   .mobile-subservices-container .nested-link {
@@ -992,6 +1016,48 @@
     height: auto;
     max-height: 70vh;
   }
+
+  /* Hint text for going back - mobile only */
+  .mobile-back-hint {
+    display: none;
+    flex-basis: 100%;
+    text-align: center;
+    font-size: 0.7rem;
+    color: rgba(173, 255, 47, 0.6);
+    margin-top: 0.75rem;
+    opacity: 0;
+    animation: fadeInHint 0.5s ease 0.3s forwards;
+    list-style: none;
+  }
+
+  .mobile-back-hint.show {
+    display: block !important;
+  }
+
+  @keyframes fadeInHint {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Pulse animation on expanded service box */
+  .submenu-item.expanded .submenu-link {
+    animation: gentlePulse 2s ease-in-out infinite;
+  }
+
+  @keyframes gentlePulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgba(173, 255, 47, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 12px 3px rgba(173, 255, 47, 0.25);
+    }
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -1050,11 +1116,70 @@
 }
 
 .footer-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  max-width: 1200px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Footer Brand Column */
+.footer-brand {
+  flex: 0 0 28%;
+  max-width: 320px;
+}
+
+.footer-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  margin-bottom: 1.25rem;
+}
+
+.footer-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.footer-brand-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
+.footer-about {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: #909090;
+  margin: 0 0 1rem;
+}
+
+.footer-tagline {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ADFF2F;
+  margin: 0;
+  letter-spacing: 0.05em;
+}
+
+/* Footer Map Column */
+.footer-map {
+  flex: 0 0 32%;
+  max-width: 380px;
+}
+
+/* Footer Contact Column */
+.footer-contact {
+  flex: 0 0 28%;
+  max-width: 300px;
+  text-align: left;
 }
 
 .footer-title {
@@ -1175,8 +1300,24 @@
   }
 
   .footer-content {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 2rem;
+    padding: 0;
+  }
+
+  .footer-brand,
+  .footer-map,
+  .footer-contact {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .footer-brand {
+    text-align: center;
+  }
+
+  .footer-logo-container {
+    justify-content: center;
   }
 
   .footer-title {

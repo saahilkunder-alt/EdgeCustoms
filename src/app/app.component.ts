@@ -42,6 +42,16 @@ export class AppComponent implements OnInit {
     this.expandedService = this.expandedService === service ? null : service;
   }
 
+  onSubmenuClick(event: Event): void {
+    const target = event.target as HTMLElement;
+    // If clicking on a link or button, don't close
+    if (target.closest('.submenu-link') || target.closest('.nested-link')) {
+      return;
+    }
+    // Close the expanded service when clicking on submenu background or any other area
+    this.expandedService = null;
+  }
+
   private router = inject(Router);
   private uiService = inject(UiService);
 
@@ -123,6 +133,16 @@ export class AppComponent implements OnInit {
       if (this.isServicesExpanded) {
          this.isServicesExpanded = false;
          this.expandedService = null;
+      }
+    }
+    
+    // If click is inside the menu but not on interactive elements, close expanded service
+    if (clickedInsideMenu && this.expandedService) {
+      const clickedOnLink = target.closest('.submenu-link') || target.closest('.nested-link');
+      const clickedOnContainer = target.closest('.mobile-subservices-container');
+      // Only close if not clicking directly on links or the subservices container with links
+      if (!clickedOnLink && !clickedOnContainer) {
+        this.expandedService = null;
       }
     }
   }

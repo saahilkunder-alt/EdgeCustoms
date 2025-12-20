@@ -27,7 +27,7 @@
             Services
             <span class="toggle-icon" [class.rotated]="isServicesExpanded">+</span>
           </button>
-          <ul class="submenu" [class.show]="isServicesExpanded">
+          <ul class="submenu" [class.show]="isServicesExpanded" (click)="onSubmenuClick($event)">
             <!-- 1. PPF -->
             <li class="submenu-item" [class.expanded]="expandedService === 'ppf'">
               <button class="submenu-link" (click)="toggleServiceSubmenu('ppf', $event)">
@@ -157,6 +157,10 @@
                 <a routerLink="/services/coding" fragment="module" class="nested-link">Module Programming & Adaptations</a>
               }
             </li>
+            <!-- Hint text for mobile users -->
+            <li class="mobile-back-hint" [class.show]="expandedService">
+              Tap on the service again to go back
+            </li>
           </ul>
         </li>
         <li class="nav-item">
@@ -173,13 +177,26 @@
   <!-- Footer Section -->
   <footer class="footer" id="contact">
     <div class="footer-content">
+      <!-- Brand Column -->
+      <div class="footer-brand">
+        <a routerLink="/" class="footer-logo-container">
+          <img src="logo.png" alt="Edge Customs Logo" class="footer-logo" />
+          <span class="footer-brand-name">Edge Customs</span>
+        </a>
+        <p class="footer-about">
+          Mumbai's premier destination for automotive excellence. We specialize in paint protection films, ceramic coatings, and professional detailing — transforming vehicles into works of art since day one.
+        </p>
+        <p class="footer-tagline">Driven By Detail.</p>
+      </div>
+
+      <!-- Map Column -->
       <div class="footer-map">
         <h3 class="footer-title">Find Us</h3>
         <div class="map-container">
           <iframe 
             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.0!2d72.8!3d19.1!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDA2JzAwLjAiTiA3MsKwNDgnMDAuMCJF!5e0!3m2!1sen!2sin!4v1234567890"
             width="100%" 
-            height="250" 
+            height="220" 
             style="border:0; border-radius: 12px;" 
             allowfullscreen="" 
             loading="lazy" 
@@ -188,6 +205,7 @@
         </div>
       </div>
       
+      <!-- Contact Column -->
       <div class="footer-contact">
         <h3 class="footer-title">Get In Touch</h3>
         <div class="contact-info">
@@ -214,7 +232,7 @@
           <a href="#" class="social-link" aria-label="Facebook">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
           </a>
-          <a href="https://wa.me/919029999651" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
+          <a href="https://wa.me/917977058091" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-8.68-2.031-.967-.272-.099-.47-.149-.669.198-.199.346-.769.967-.943 1.166-.173.198-.347.223-.644.074-.297-.149-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.52.151-.174.2-.298.3-.496.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.505 2.193.96 2.64 1.701 3.655 4.092.83 2.025 1.353 3.167.3 3.167-.78 1.832 2.146 1.832 3.666 3.072 6.59-.074.298-.272.571-.57.72-.297.149-.569.248-.768.347z"/></svg>
           </a>
         </div>

@@ -465,7 +465,7 @@
 
 .mechanic-info-box {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1400px;
   background: linear-gradient(145deg, rgba(25, 25, 25, 0.95) 0%, rgba(15, 15, 15, 0.98) 100%);
   border-radius: 24px;
   overflow: hidden;
@@ -538,7 +538,6 @@
   line-height: 1.75;
   color: #b0b0b0;
   margin: 0 0 1.5rem;
-  max-width: 900px;
 }
 
 .mechanic-tags {
