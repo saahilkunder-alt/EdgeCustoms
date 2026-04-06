@@ -1,3 +1,4 @@
+@if (!isAdminRoute) {
 <header class="header">
   <div class="header-content">
     <a routerLink="/" class="logo-container">
@@ -170,10 +171,12 @@
     </nav>
   </div>
 </header>
+}
 
 <main class="main-content">
   <router-outlet />
 
+  @if (!isAdminRoute) {
   <!-- Footer Section -->
   <footer class="footer" id="contact">
     <div class="footer-content">
@@ -244,4 +247,5 @@
       <p class="license">Premium Car Detailing & Protection Studio | Licensed & Insured</p>
     </div>
   </footer>
+  }
 </main>

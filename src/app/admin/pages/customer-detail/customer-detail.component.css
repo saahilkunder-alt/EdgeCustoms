@@ -1,0 +1,175 @@
+.customer-detail { padding: 16px; padding-bottom: 40px; }
+
+.back-link {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #666;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+.back-link:hover { color: #ADFF2F; }
+
+/* Profile */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #ADFF2F 0%, #6bbd00 100%);
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.profile-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.profile-phone {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  color: #3b82f6;
+  text-decoration: none;
+}
+
+/* Stats */
+.cust-stats {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.cstat {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 10px;
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  border-radius: 14px;
+}
+.cstat-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ADFF2F;
+}
+.cstat-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+/* Sections */
+.section { margin-bottom: 24px; }
+.section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 12px;
+}
+.no-data {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #555;
+}
+
+/* Vehicle Cards */
+.vehicle-card {
+  padding: 12px 16px;
+  background: #121212;
+  border: 1px solid #1a1a1a;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+.v-name {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.v-details {
+  display: flex;
+  gap: 12px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #666;
+}
+.v-reg { font-family: 'Courier New', monospace; }
+
+/* Job History */
+.jobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.job-card {
+  display: block;
+  padding: 14px 16px;
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.job-card:hover { border-color: #2a2a2a; }
+.job-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.job-id {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ADFF2F;
+}
+.job-mid {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 4px;
+}
+.job-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.job-date {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  color: #555;
+}
+.job-amount {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ADFF2F;
+}

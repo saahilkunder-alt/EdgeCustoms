@@ -17,5 +17,9 @@ export const routes: Routes = [
   { path: 'services/detailing', component: DetailingComponent },
   { path: 'services/sunfilms', component: SunfilmsComponent },
   { path: 'services/coding', component: CodingComponent },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES)
+  },
   { path: '**', redirectTo: '' }
 ];

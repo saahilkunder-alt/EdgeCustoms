@@ -1,0 +1,71 @@
+@if (customer) {
+<div class="customer-detail">
+  <a routerLink="/admin/customers" class="back-link">← Back</a>
+
+  <!-- Profile -->
+  <div class="profile-header">
+    <div class="profile-avatar">{{ customer.name.charAt(0).toUpperCase() }}</div>
+    <div class="profile-info">
+      <h1 class="profile-name">{{ customer.name }}</h1>
+      <a href="tel:{{ customer.phone }}" class="profile-phone">📞 {{ customer.phone }}</a>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="cust-stats">
+    <div class="cstat">
+      <span class="cstat-value">{{ customer.jobIds.length }}</span>
+      <span class="cstat-label">Total Jobs</span>
+    </div>
+    <div class="cstat">
+      <span class="cstat-value">₹{{ customer.totalRevenue.toLocaleString() }}</span>
+      <span class="cstat-label">Revenue</span>
+    </div>
+    <div class="cstat">
+      <span class="cstat-value">{{ customer.vehicles.length }}</span>
+      <span class="cstat-label">Vehicles</span>
+    </div>
+  </div>
+
+  <!-- Vehicles -->
+  <div class="section">
+    <h2 class="section-title">🚗 Vehicles</h2>
+    @for (v of customer.vehicles; track v.registrationNumber) {
+      <div class="vehicle-card">
+        <span class="v-name">{{ v.brand }} {{ v.model }}</span>
+        <div class="v-details">
+          <span class="v-reg">{{ v.registrationNumber }}</span>
+          <span class="v-color">{{ v.color }}</span>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Job History -->
+  <div class="section">
+    <h2 class="section-title">📋 Job History</h2>
+    @if (jobs.length === 0) {
+      <p class="no-data">No jobs found.</p>
+    } @else {
+      <div class="jobs-list">
+        @for (job of jobs; track job.id) {
+          <a [routerLink]="['/admin/jobs', job.id]" class="job-card">
+            <div class="job-top">
+              <span class="job-id">{{ job.id }}</span>
+              <app-status-badge [status]="job.status" />
+            </div>
+            <div class="job-mid">
+              <span>{{ job.carBrand }} {{ job.carModel }}</span>
+              <span>{{ job.registrationNumber }}</span>
+            </div>
+            <div class="job-bottom">
+              <span class="job-date">{{ formatDate(job.createdAt) }}</span>
+              <span class="job-amount">₹{{ (job.finalAmount || 0).toLocaleString() }}</span>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+</div>
+}

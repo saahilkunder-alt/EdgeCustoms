@@ -1,0 +1,235 @@
+.dashboard {
+  padding: 16px;
+}
+
+.page-header {
+  margin-bottom: 20px;
+}
+.page-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.page-sub {
+  font-size: 13px;
+  color: #666;
+  margin: 2px 0 0;
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  border-radius: 16px;
+  transition: transform 0.2s;
+}
+.stat-card:active { transform: scale(0.98); }
+.stat-card.accent { border-color: rgba(245, 158, 11, 0.2); }
+.stat-card.revenue { border-color: rgba(173, 255, 47, 0.2); }
+.stat-icon { font-size: 28px; }
+.stat-info {
+  display: flex;
+  flex-direction: column;
+}
+.stat-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+.stat-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Quick Actions */
+.quick-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+.action-btn.primary {
+  background: #ADFF2F;
+  color: #0a0a0a;
+}
+.action-btn.primary:hover { background: #c5ff5a; }
+.action-btn.primary:active { transform: scale(0.97); }
+.action-btn.primary .action-icon {
+  font-size: 20px;
+  font-weight: 800;
+}
+.action-btn.secondary {
+  background: #181818;
+  color: #ccc;
+  border: 1px solid #262626;
+}
+.action-btn.secondary:hover { background: #1e1e1e; }
+
+/* Section */
+.section {
+  margin-bottom: 24px;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+.see-all {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #ADFF2F;
+  text-decoration: none;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: #121212;
+  border-radius: 16px;
+  border: 1px dashed #222;
+}
+.empty-icon {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 12px;
+}
+.empty-state p {
+  color: #555;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+}
+
+/* Job Cards */
+.jobs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.job-card {
+  display: block;
+  padding: 14px 16px;
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.job-card:hover { border-color: #2a2a2a; background: #171717; }
+.job-card:active { transform: scale(0.99); }
+
+.job-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.job-id {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: #ADFF2F;
+  letter-spacing: 0.5px;
+}
+.job-middle {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 6px;
+}
+.job-customer {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+}
+.job-vehicle {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #777;
+}
+.job-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.job-reg {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #555;
+  font-weight: 500;
+}
+.job-amount {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ADFF2F;
+}
+
+/* Admin Controls */
+.admin-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.admin-btn {
+  flex: 1;
+  padding: 14px;
+  border: 1px solid #262626;
+  border-radius: 12px;
+  background: #141414;
+  color: #aaa;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.admin-btn:hover { border-color: #333; background: #1a1a1a; }
+.admin-hint {
+  font-size: 11px;
+  color: #444;
+  font-family: 'Outfit', sans-serif;
+  text-align: center;
+}

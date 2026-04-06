@@ -1,0 +1,211 @@
+@if (job) {
+<div class="job-detail">
+  <!-- Header -->
+  <div class="detail-header">
+    <a routerLink="/admin/jobs" class="back-link">← Back</a>
+    <div class="header-info">
+      <h1 class="job-id">{{ job.id }}</h1>
+      <app-status-badge [status]="job.status" />
+    </div>
+    <p class="job-date">Created {{ formatDate(job.createdAt) }}</p>
+  </div>
+
+  <!-- Status Flow -->
+  <div class="status-flow">
+    <h3 class="section-label">Update Status</h3>
+    <div class="status-buttons">
+      @for (status of statusFlow; track status) {
+        <button class="status-btn"
+          [class.active]="job.status === status"
+          [class.received]="status === 'Received'"
+          [class.inprogress]="status === 'In Progress'"
+          [class.waiting]="status === 'Waiting'"
+          [class.completed]="status === 'Completed'"
+          [class.delivered]="status === 'Delivered'"
+          (click)="updateStatus(status)">
+          {{ status }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Customer & Vehicle -->
+  <div class="info-card">
+    <h3 class="card-title">👤 Customer</h3>
+    <div class="info-row">
+      <span class="info-label">Name</span>
+      <span class="info-value">{{ job.customerName }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Phone</span>
+      <a href="tel:{{ job.customerPhone }}" class="info-value link">{{ job.customerPhone }}</a>
+    </div>
+  </div>
+
+  <div class="info-card">
+    <h3 class="card-title">🚗 Vehicle</h3>
+    <div class="info-row">
+      <span class="info-label">Car</span>
+      <span class="info-value">{{ job.carBrand }} {{ job.carModel }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Reg. No.</span>
+      <span class="info-value mono">{{ job.registrationNumber }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Color</span>
+      <span class="info-value">{{ job.carColor || '—' }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Odometer</span>
+      <span class="info-value">{{ job.odometerReading ? (job.odometerReading.toLocaleString() + ' km') : '—' }}</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Fuel Level</span>
+      <span class="info-value">{{ job.fuelLevel }}%</span>
+    </div>
+  </div>
+
+  <!-- Services -->
+  <div class="info-card">
+    <h3 class="card-title">🔧 Services</h3>
+    @for (svc of job.selectedServices; track svc.id) {
+      <div class="info-row">
+        <span class="info-label">{{ svc.name }}</span>
+        <span class="info-value price">₹{{ svc.price.toLocaleString() }}</span>
+      </div>
+    }
+  </div>
+
+  <!-- Pricing -->
+  <div class="info-card pricing-card">
+    <h3 class="card-title">💰 Pricing</h3>
+    <div class="info-row">
+      <span class="info-label">Subtotal</span>
+      <span class="info-value">₹{{ (job.subtotal || 0).toLocaleString() }}</span>
+    </div>
+    @if (job.discountAmount > 0) {
+      <div class="info-row">
+        <span class="info-label">Discount ({{ job.discountType === 'percent' ? job.discountValue + '%' : 'Flat' }})</span>
+        <span class="info-value discount">- ₹{{ job.discountAmount.toLocaleString() }}</span>
+      </div>
+    }
+    <div class="info-row total-row">
+      <span class="info-label">Total</span>
+      <span class="info-value total">₹{{ (job.finalAmount || 0).toLocaleString() }}</span>
+    </div>
+  </div>
+
+  <!-- Payment -->
+  <div class="info-card">
+    <h3 class="card-title">💳 Payment</h3>
+    @if (job.payment) {
+      <div class="info-row">
+        <span class="info-label">Mode</span>
+        <span class="info-value">{{ job.payment.mode }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Amount</span>
+        <span class="info-value price">₹{{ job.payment.amount.toLocaleString() }}</span>
+      </div>
+      @if (job.payment.transactionId) {
+        <div class="info-row">
+          <span class="info-label">Txn ID</span>
+          <span class="info-value mono">{{ job.payment.transactionId }}</span>
+        </div>
+      }
+      @if (job.payment.paidAt) {
+        <div class="info-row">
+          <span class="info-label">Paid At</span>
+          <span class="info-value">{{ formatDate(job.payment.paidAt) }}</span>
+        </div>
+      }
+    } @else {
+      <button class="action-btn pay" (click)="togglePaymentForm()">
+        {{ showPaymentForm ? 'Cancel' : 'Record Payment' }}
+      </button>
+
+      @if (showPaymentForm) {
+        <div class="payment-form">
+          <div class="form-group">
+            <label class="form-label">Payment Mode</label>
+            <div class="mode-buttons">
+              @for (mode of paymentModes; track mode) {
+                <button class="mode-btn" [class.active]="paymentMode === mode" (click)="paymentMode = mode">
+                  {{ mode }}
+                </button>
+              }
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amount (₹)</label>
+            <input type="number" class="form-input" [(ngModel)]="paymentAmount" inputmode="numeric">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Transaction ID (optional)</label>
+            <input type="text" class="form-input" [(ngModel)]="paymentTxnId" placeholder="UPI ref / Card auth">
+          </div>
+          <button class="action-btn confirm" (click)="savePayment()">✓ Confirm Payment</button>
+        </div>
+      }
+    }
+  </div>
+
+  <!-- Before Photos -->
+  @if (job.beforePhotos && job.beforePhotos.length > 0) {
+    <div class="info-card">
+      <h3 class="card-title">📸 Before Photos</h3>
+      <div class="photo-grid">
+        @for (photo of job.beforePhotos; track $index) {
+          <img [src]="photo" alt="Before {{ $index + 1 }}" class="photo-thumb">
+        }
+      </div>
+    </div>
+  }
+
+  <!-- After Photos -->
+  <div class="info-card">
+    <h3 class="card-title">📸 After Photos</h3>
+    <app-photo-upload
+      label=""
+      [photos]="job.afterPhotos || []"
+      (photosChange)="onAfterPhotosChange($event)"
+      [maxPhotos]="5" />
+  </div>
+
+  <!-- Remarks -->
+  @if (job.remarks) {
+    <div class="info-card">
+      <h3 class="card-title">📝 Remarks</h3>
+      <p class="remarks-text">{{ job.remarks }}</p>
+    </div>
+  }
+
+  <!-- Actions -->
+  <div class="actions-section">
+    <button class="action-btn pdf" (click)="downloadPdf()">📄 Download PDF</button>
+    <button class="action-btn whatsapp" (click)="shareWhatsApp()">💬 WhatsApp</button>
+  </div>
+
+  <!-- Edit History -->
+  @if (job.editHistory && job.editHistory.length > 0) {
+    <div class="info-card">
+      <button class="history-toggle" (click)="showEditHistory = !showEditHistory">
+        📜 Edit History ({{ job.editHistory.length }})
+        <span class="toggle-arrow" [class.rotated]="showEditHistory">▼</span>
+      </button>
+      @if (showEditHistory) {
+        <div class="history-list">
+          @for (log of job.editHistory; track log.timestamp) {
+            <div class="history-item">
+              <span class="history-time">{{ formatDate(log.timestamp) }}</span>
+              <span class="history-role">{{ log.editorRole }}</span>
+              <span class="history-detail">{{ formatField(log.field) }}: {{ log.oldValue }} → {{ log.newValue }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
+}

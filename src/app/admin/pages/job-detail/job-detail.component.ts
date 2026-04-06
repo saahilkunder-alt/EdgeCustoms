@@ -1,0 +1,107 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { StorageService } from '../../services/storage.service';
+import { AuthService } from '../../services/auth.service';
+import { PdfService } from '../../services/pdf.service';
+import { StatusBadgeComponent } from '../../components/status-badge/status-badge.component';
+import { PhotoUploadComponent } from '../../components/photo-upload/photo-upload.component';
+import { JobCard, JobStatus, PaymentMode } from '../../models/job.model';
+
+@Component({
+  selector: 'app-job-detail',
+  standalone: true,
+  imports: [RouterLink, FormsModule, StatusBadgeComponent, PhotoUploadComponent],
+  templateUrl: './job-detail.component.html',
+  styleUrl: './job-detail.component.css'
+})
+export class JobDetailComponent implements OnInit {
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private storage = inject(StorageService);
+  private auth = inject(AuthService);
+  private pdf = inject(PdfService);
+
+  job: JobCard | null = null;
+  isAdmin = false;
+  showPaymentForm = false;
+  showEditHistory = false;
+
+  // Payment form
+  paymentMode: PaymentMode = 'UPI';
+  paymentAmount = 0;
+  paymentTxnId = '';
+
+  paymentModes: PaymentMode[] = ['Cash', 'UPI', 'Card', 'Net Banking', 'Other'];
+
+  statusFlow: JobStatus[] = [
+    JobStatus.Received,
+    JobStatus.InProgress,
+    JobStatus.Waiting,
+    JobStatus.Completed,
+    JobStatus.Delivered
+  ];
+
+  ngOnInit(): void {
+    this.isAdmin = this.auth.isAdmin;
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.job = this.storage.getJob(id);
+      if (this.job) {
+        this.paymentAmount = this.job.finalAmount || 0;
+      }
+    }
+    if (!this.job) {
+      this.router.navigate(['/admin/jobs']);
+    }
+  }
+
+  updateStatus(status: JobStatus): void {
+    if (!this.job) return;
+    this.job = this.storage.updateJob(this.job.id, { status }, this.auth.currentRole || 'staff');
+  }
+
+  onAfterPhotosChange(photos: string[]): void {
+    if (!this.job) return;
+    this.job = this.storage.updateJob(this.job.id, { afterPhotos: photos }, this.auth.currentRole || 'staff');
+  }
+
+  togglePaymentForm(): void {
+    this.showPaymentForm = !this.showPaymentForm;
+  }
+
+  savePayment(): void {
+    if (!this.job) return;
+    this.job = this.storage.updateJob(this.job.id, {
+      payment: {
+        mode: this.paymentMode,
+        amount: this.paymentAmount,
+        transactionId: this.paymentTxnId || undefined,
+        paidAt: new Date().toISOString()
+      }
+    }, this.auth.currentRole || 'staff');
+    this.showPaymentForm = false;
+  }
+
+  async downloadPdf(): Promise<void> {
+    if (!this.job) return;
+    await this.pdf.generateJobCardPdf(this.job);
+  }
+
+  shareWhatsApp(): void {
+    if (!this.job) return;
+    const msg = this.pdf.generateWhatsAppMessage(this.job);
+    window.open(`https://wa.me/${this.job.customerPhone}?text=${msg}`, '_blank');
+  }
+
+  formatDate(dateStr: string): string {
+    return new Date(dateStr).toLocaleDateString('en-IN', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  formatField(field: string): string {
+    return field.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
+  }
+}

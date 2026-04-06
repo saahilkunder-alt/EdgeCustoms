@@ -1,0 +1,283 @@
+.job-detail { padding: 16px; padding-bottom: 40px; }
+
+/* Header */
+.detail-header { margin-bottom: 20px; }
+.back-link {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #666;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.back-link:hover { color: #ADFF2F; }
+.header-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.job-id {
+  font-family: 'Outfit', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #ADFF2F;
+  margin: 0;
+}
+.job-date {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #555;
+  margin: 4px 0 0;
+}
+
+/* Status Flow */
+.status-flow { margin-bottom: 20px; }
+.section-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  margin: 0 0 8px;
+}
+.status-buttons {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+.status-buttons::-webkit-scrollbar { display: none; }
+.status-btn {
+  padding: 10px 14px;
+  border: 2px solid #222;
+  border-radius: 10px;
+  background: #141414;
+  color: #666;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.status-btn:hover { border-color: #333; }
+.status-btn.active.received { border-color: #3b82f6; background: rgba(59,130,246,0.1); color: #3b82f6; }
+.status-btn.active.inprogress { border-color: #f59e0b; background: rgba(245,158,11,0.1); color: #f59e0b; }
+.status-btn.active.waiting { border-color: #eab308; background: rgba(234,179,8,0.1); color: #eab308; }
+.status-btn.active.completed { border-color: #22c55e; background: rgba(34,197,94,0.1); color: #22c55e; }
+.status-btn.active.delivered { border-color: #9ca3af; background: rgba(107,114,128,0.1); color: #9ca3af; }
+
+/* Info Cards */
+.info-card {
+  background: #121212;
+  border: 1px solid #1a1a1a;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 12px;
+}
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid #171717;
+}
+.info-row:last-child { border-bottom: none; }
+.info-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #666;
+}
+.info-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ddd;
+  text-align: right;
+  max-width: 60%;
+}
+.info-value.price { color: #ADFF2F; }
+.info-value.discount { color: #ef4444; }
+.info-value.total { font-size: 18px; color: #ADFF2F; }
+.info-value.link { color: #3b82f6; text-decoration: none; }
+.info-value.mono { font-family: 'Courier New', monospace; letter-spacing: 0.5px; }
+.total-row {
+  border-top: 2px solid #222;
+  padding-top: 12px;
+  margin-top: 4px;
+}
+.total-row .info-label { font-size: 16px; font-weight: 700; color: #fff; }
+
+/* Payment Form */
+.payment-form {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #1e1e1e;
+}
+.form-group { margin-bottom: 12px; }
+.form-label {
+  display: block;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #888;
+  margin-bottom: 6px;
+}
+.form-input {
+  width: 100%;
+  padding: 12px 14px;
+  background: #1a1a1a;
+  border: 2px solid #262626;
+  border-radius: 10px;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus { border-color: #ADFF2F; }
+.form-input::placeholder { color: #444; }
+
+.mode-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.mode-btn {
+  padding: 8px 14px;
+  border: 1px solid #262626;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #888;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mode-btn.active {
+  border-color: #ADFF2F;
+  color: #ADFF2F;
+  background: rgba(173,255,47,0.05);
+}
+
+/* Actions */
+.action-btn {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 8px;
+}
+.action-btn:active { transform: scale(0.98); }
+.action-btn.pay {
+  background: #1e1e1e;
+  color: #ADFF2F;
+  border: 1px solid rgba(173,255,47,0.2);
+}
+.action-btn.confirm {
+  background: #ADFF2F;
+  color: #0a0a0a;
+}
+.actions-section {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.action-btn.pdf {
+  flex: 1;
+  background: #1a1a1a;
+  color: #ddd;
+  border: 1px solid #262626;
+}
+.action-btn.pdf:hover { border-color: #444; }
+.action-btn.whatsapp {
+  flex: 1;
+  background: #25D366;
+  color: #fff;
+}
+.action-btn.whatsapp:hover { background: #20bd5a; }
+
+/* Photos */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+.photo-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 2px solid #1e1e1e;
+}
+
+/* Remarks */
+.remarks-text {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #aaa;
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Edit History */
+.history-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: none;
+  color: #888;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+}
+.toggle-arrow {
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+.toggle-arrow.rotated { transform: rotate(180deg); }
+.history-list {
+  margin-top: 12px;
+  border-top: 1px solid #1e1e1e;
+  padding-top: 8px;
+}
+.history-item {
+  padding: 8px 0;
+  border-bottom: 1px solid #151515;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.history-time {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  color: #444;
+}
+.history-role {
+  font-family: 'Outfit', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: #ADFF2F;
+  text-transform: uppercase;
+}
+.history-detail {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #888;
+  word-break: break-all;
+}

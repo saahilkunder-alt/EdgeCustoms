@@ -1,0 +1,264 @@
+<div class="job-form">
+  <!-- Progress Bar -->
+  <div class="progress-bar">
+    @for (step of [1,2,3,4]; track step) {
+      <div class="progress-step" [class.active]="currentStep >= step" [class.current]="currentStep === step">
+        <div class="step-dot">{{ step }}</div>
+        <span class="step-name">
+          @switch (step) {
+            @case (1) { Customer }
+            @case (2) { Services }
+            @case (3) { Photos }
+            @case (4) { Review }
+          }
+        </span>
+      </div>
+      @if (step < 4) {
+        <div class="progress-line" [class.active]="currentStep > step"></div>
+      }
+    }
+  </div>
+
+  <!-- Step 1: Customer & Vehicle -->
+  @if (currentStep === 1) {
+    <div class="form-step">
+      <h2 class="step-title">Customer & Vehicle</h2>
+
+      <div class="form-group">
+        <label class="form-label">Phone Number *</label>
+        <input type="tel" class="form-input" [(ngModel)]="customerPhone"
+          (ngModelChange)="onPhoneChange()" placeholder="Enter 10-digit number"
+          maxlength="10" inputmode="numeric">
+        @if (existingCustomer) {
+          <span class="hint success">✅ Returning customer — auto-filled!</span>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Customer Name *</label>
+        <input type="text" class="form-input" [(ngModel)]="customerName" placeholder="Full name">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label">Car Brand *</label>
+          <select class="form-select" [(ngModel)]="carBrand" (ngModelChange)="onBrandChange()">
+            <option value="">Select Brand</option>
+            @for (brand of brands; track brand) {
+              <option [value]="brand">{{ brand }}</option>
+            }
+          </select>
+        </div>
+        <div class="form-group flex-1">
+          <label class="form-label">Model *</label>
+          <select class="form-select" [(ngModel)]="carModel" [disabled]="!carBrand">
+            <option value="">Select Model</option>
+            @for (model of models; track model) {
+              <option [value]="model">{{ model }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group flex-1">
+          <label class="form-label">Reg. Number *</label>
+          <input type="text" class="form-input uppercase" [(ngModel)]="registrationNumber"
+            placeholder="MH 02 AB 1234" maxlength="13">
+        </div>
+        <div class="form-group flex-1">
+          <label class="form-label">Color</label>
+          <select class="form-select" [(ngModel)]="carColor">
+            <option value="">Select Color</option>
+            @for (color of colors; track color) {
+              <option [value]="color">{{ color }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Odometer Reading (km)</label>
+        <input type="number" class="form-input" [(ngModel)]="odometerReading"
+          placeholder="e.g. 25000" inputmode="numeric">
+      </div>
+
+      <app-fuel-gauge [(level)]="fuelLevel" />
+    </div>
+  }
+
+  <!-- Step 2: Services -->
+  @if (currentStep === 2) {
+    <div class="form-step">
+      <h2 class="step-title">Select Services</h2>
+
+      <div class="running-total">
+        <span>Selected: {{ selectedServices.length }} services</span>
+        <span class="total-amount">₹{{ subtotal.toLocaleString() }}</span>
+      </div>
+
+      <div class="service-categories">
+        @for (cat of serviceCategories; track cat.name) {
+          <div class="category-group" [class.expanded]="expandedCategory === cat.name">
+            <button class="category-header" (click)="toggleCategory(cat.name)">
+              <span class="cat-name">{{ cat.name }}</span>
+              <div class="cat-right">
+                @if (getCategorySelectedCount(cat) > 0) {
+                  <span class="cat-count">{{ getCategorySelectedCount(cat) }}</span>
+                }
+                <span class="cat-arrow" [class.rotated]="expandedCategory === cat.name">▼</span>
+              </div>
+            </button>
+
+            @if (expandedCategory === cat.name) {
+              <div class="category-services">
+                @for (svc of cat.services; track svc.id) {
+                  <button class="service-card" [class.selected]="svc.selected" (click)="toggleService(svc)">
+                    <div class="svc-check">
+                      @if (svc.selected) { ✓ } @else { ○ }
+                    </div>
+                    <div class="svc-info">
+                      <span class="svc-name">{{ svc.name }}</span>
+                      <span class="svc-price">₹{{ svc.price.toLocaleString() }}</span>
+                    </div>
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Step 3: Photos & Remarks -->
+  @if (currentStep === 3) {
+    <div class="form-step">
+      <h2 class="step-title">Photos & Remarks</h2>
+
+      <app-photo-upload
+        label="Before Photos (optional)"
+        [photos]="beforePhotos"
+        (photosChange)="beforePhotos = $event"
+        [maxPhotos]="5" />
+
+      <div class="form-group" style="margin-top: 20px;">
+        <label class="form-label">Remarks / Notes</label>
+        <textarea class="form-textarea" [(ngModel)]="remarks"
+          placeholder="Any scratches, dents, special requests..."
+          rows="4"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="customerAcknowledged">
+          <span class="check-box"></span>
+          <span>Customer has acknowledged vehicle condition</span>
+        </label>
+      </div>
+
+      <app-signature-pad (signatureSaved)="onSignatureSaved($event)" />
+      @if (signatureDataUrl) {
+        <p class="hint success" style="margin-top: 8px;">✅ Signature captured</p>
+      }
+    </div>
+  }
+
+  <!-- Step 4: Review & Submit -->
+  @if (currentStep === 4) {
+    <div class="form-step">
+      <h2 class="step-title">Review & Submit</h2>
+
+      <!-- Summary -->
+      <div class="review-section">
+        <h3 class="review-heading">Customer</h3>
+        <div class="review-row">
+          <span class="review-label">Name</span>
+          <span class="review-value">{{ customerName }}</span>
+        </div>
+        <div class="review-row">
+          <span class="review-label">Phone</span>
+          <span class="review-value">{{ customerPhone }}</span>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <h3 class="review-heading">Vehicle</h3>
+        <div class="review-row">
+          <span class="review-label">Car</span>
+          <span class="review-value">{{ carBrand }} {{ carModel }}</span>
+        </div>
+        <div class="review-row">
+          <span class="review-label">Reg. No.</span>
+          <span class="review-value">{{ registrationNumber }}</span>
+        </div>
+        <div class="review-row">
+          <span class="review-label">Color</span>
+          <span class="review-value">{{ carColor || '—' }}</span>
+        </div>
+        <div class="review-row">
+          <span class="review-label">Odometer</span>
+          <span class="review-value">{{ odometerReading ? odometerReading.toLocaleString() + ' km' : '—' }}</span>
+        </div>
+        <div class="review-row">
+          <span class="review-label">Fuel</span>
+          <span class="review-value">{{ fuelLevel }}%</span>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <h3 class="review-heading">Services ({{ selectedServices.length }})</h3>
+        @for (svc of selectedServices; track svc.id) {
+          <div class="review-row">
+            <span class="review-label">{{ svc.name }}</span>
+            <span class="review-value">₹{{ svc.price.toLocaleString() }}</span>
+          </div>
+        }
+      </div>
+
+      <!-- Pricing -->
+      <div class="pricing-section">
+        <div class="price-row">
+          <span>Subtotal</span>
+          <span>₹{{ subtotal.toLocaleString() }}</span>
+        </div>
+
+        <div class="discount-row">
+          <div class="discount-inputs">
+            <select class="form-select small" [(ngModel)]="discountType">
+              <option value="flat">Flat (₹)</option>
+              <option value="percent">Percent (%)</option>
+            </select>
+            <input type="number" class="form-input small" [(ngModel)]="discountValue"
+              placeholder="0" inputmode="numeric" min="0">
+          </div>
+          <span class="discount-amount">- ₹{{ discountAmount.toLocaleString() }}</span>
+        </div>
+
+        <div class="price-row total">
+          <span>Final Amount</span>
+          <span>₹{{ finalAmount.toLocaleString() }}</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Navigation -->
+  <div class="form-nav">
+    @if (currentStep > 1) {
+      <button class="nav-btn back" (click)="prevStep()">← Back</button>
+    } @else {
+      <div></div>
+    }
+
+    @if (currentStep < totalSteps) {
+      <button class="nav-btn next" (click)="nextStep()" [disabled]="!canProceed">
+        Next →
+      </button>
+    } @else {
+      <button class="nav-btn submit" (click)="submitJob()">
+        ✓ Create Job Card
+      </button>
+    }
+  </div>
+</div>

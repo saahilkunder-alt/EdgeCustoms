@@ -1,0 +1,101 @@
+<div class="dashboard">
+  <div class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-sub">Today's overview</p>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon">📋</span>
+      <div class="stat-info">
+        <span class="stat-value">{{ stats.total }}</span>
+        <span class="stat-label">Today's Jobs</span>
+      </div>
+    </div>
+    <div class="stat-card accent">
+      <span class="stat-icon">⚡</span>
+      <div class="stat-info">
+        <span class="stat-value">{{ stats.inProgress }}</span>
+        <span class="stat-label">In Progress</span>
+      </div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">✅</span>
+      <div class="stat-info">
+        <span class="stat-value">{{ stats.completed }}</span>
+        <span class="stat-label">Completed</span>
+      </div>
+    </div>
+    <div class="stat-card revenue">
+      <span class="stat-icon">💰</span>
+      <div class="stat-info">
+        <span class="stat-value">₹{{ stats.revenue.toLocaleString() }}</span>
+        <span class="stat-label">Revenue</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="quick-actions">
+    <a routerLink="/admin/jobs/new" class="action-btn primary">
+      <span class="action-icon">+</span>
+      <span>New Job Card</span>
+    </a>
+    <a routerLink="/admin/customers" class="action-btn secondary">
+      <span class="action-icon">🔍</span>
+      <span>Search Customer</span>
+    </a>
+  </div>
+
+  <!-- Recent Jobs -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">Recent Jobs</h2>
+      <a routerLink="/admin/jobs" class="see-all">See All →</a>
+    </div>
+
+    @if (recentJobs.length === 0) {
+      <div class="empty-state">
+        <span class="empty-icon">📋</span>
+        <p>No jobs yet. Create your first job card!</p>
+      </div>
+    } @else {
+      <div class="jobs-list">
+        @for (job of recentJobs; track job.id) {
+          <a [routerLink]="['/admin/jobs', job.id]" class="job-card">
+            <div class="job-top">
+              <span class="job-id">{{ job.id }}</span>
+              <app-status-badge [status]="job.status" />
+            </div>
+            <div class="job-middle">
+              <span class="job-customer">{{ job.customerName }}</span>
+              <span class="job-vehicle">{{ job.carBrand }} {{ job.carModel }}</span>
+            </div>
+            <div class="job-bottom">
+              <span class="job-reg">{{ job.registrationNumber }}</span>
+              <span class="job-amount">₹{{ (job.finalAmount || 0).toLocaleString() }}</span>
+            </div>
+          </a>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Admin Controls -->
+  @if (isAdmin) {
+    <div class="section">
+      <h2 class="section-title">Admin Controls</h2>
+      <div class="admin-actions">
+        <button class="admin-btn export" (click)="exportData()">
+          📥 Export Backup
+        </button>
+        <label class="admin-btn import">
+          📤 Import Data
+          <input type="file" accept=".json" (change)="importData($event)" hidden>
+        </label>
+      </div>
+      <p class="admin-hint">Total customers: {{ totalCustomers }}</p>
+    </div>
+  }
+</div>

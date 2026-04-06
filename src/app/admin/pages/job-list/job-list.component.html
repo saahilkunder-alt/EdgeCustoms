@@ -1,0 +1,50 @@
+<div class="job-list-page">
+  <div class="page-header">
+    <h1 class="page-title">Job Cards</h1>
+    <span class="job-count">{{ filteredJobs.length }} jobs</span>
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" [(ngModel)]="searchQuery"
+      (ngModelChange)="onSearch()" placeholder="Search by name, phone, reg no...">
+  </div>
+
+  <!-- Status Tabs -->
+  <div class="status-tabs">
+    @for (filter of statusFilters; track filter) {
+      <button class="tab-btn" [class.active]="activeFilter === filter" (click)="setFilter(filter)">
+        {{ filter }}
+      </button>
+    }
+  </div>
+
+  <!-- Jobs -->
+  @if (filteredJobs.length === 0) {
+    <div class="empty-state">
+      <span class="empty-icon">📋</span>
+      <p>No jobs found</p>
+    </div>
+  } @else {
+    <div class="jobs-list">
+      @for (job of filteredJobs; track job.id) {
+        <a [routerLink]="['/admin/jobs', job.id]" class="job-card">
+          <div class="job-top">
+            <span class="job-id">{{ job.id }}</span>
+            <app-status-badge [status]="job.status" />
+          </div>
+          <div class="job-middle">
+            <span class="job-customer">{{ job.customerName }}</span>
+            <span class="job-vehicle">{{ job.carBrand }} {{ job.carModel }} · {{ job.carColor }}</span>
+          </div>
+          <div class="job-bottom">
+            <span class="job-reg">{{ job.registrationNumber }}</span>
+            <span class="job-amount">₹{{ (job.finalAmount || 0).toLocaleString() }}</span>
+          </div>
+          <div class="job-date">{{ formatDate(job.createdAt) }}</div>
+        </a>
+      }
+    </div>
+  }
+</div>

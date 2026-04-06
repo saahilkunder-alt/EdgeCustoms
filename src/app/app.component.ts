@@ -11,6 +11,7 @@ import { UiService } from './services/ui.service';
 })
 export class AppComponent implements OnInit {
   title = 'EdgeCustoms';
+  isAdminRoute = false;
   isMobileMenuOpen = false;
   isServicesExpanded = false;
   expandedService: string | null = null;
@@ -64,6 +65,8 @@ export class AppComponent implements OnInit {
     // Listen for navigation events to handle fragment scrolling manually
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
+        // Check if admin route
+        this.isAdminRoute = event.urlAfterRedirects.startsWith('/admin');
         // Close menus on navigation
         this.isServicesExpanded = false;
         this.isMobileMenuOpen = false;

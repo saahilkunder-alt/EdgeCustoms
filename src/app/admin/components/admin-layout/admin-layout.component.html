@@ -1,0 +1,36 @@
+<!-- Top Bar -->
+<header class="admin-topbar">
+  <div class="topbar-left">
+    <img src="logo.png" alt="EC" class="topbar-logo">
+    <span class="topbar-brand">Edge Customs</span>
+  </div>
+  <div class="topbar-right">
+    <span class="role-badge" [class.admin]="isAdmin">{{ role }}</span>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+</header>
+
+<!-- Page Content -->
+<main class="admin-content">
+  <router-outlet />
+</main>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-tab">
+    <span class="tab-icon">📊</span>
+    <span class="tab-label">Dashboard</span>
+  </a>
+  <a routerLink="/admin/jobs/new" routerLinkActive="active" class="nav-tab new-job">
+    <span class="tab-icon-circle">+</span>
+    <span class="tab-label">New Job</span>
+  </a>
+  <a routerLink="/admin/jobs" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-tab">
+    <span class="tab-icon">📋</span>
+    <span class="tab-label">Jobs</span>
+  </a>
+  <a routerLink="/admin/customers" routerLinkActive="active" class="nav-tab">
+    <span class="tab-icon">👥</span>
+    <span class="tab-label">Customers</span>
+  </a>
+</nav>

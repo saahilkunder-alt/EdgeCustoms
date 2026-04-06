@@ -1,0 +1,173 @@
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+  padding: 20px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+}
+
+/* Logo */
+.login-logo {
+  margin-bottom: 32px;
+}
+.logo-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  filter: drop-shadow(0 0 20px rgba(173, 255, 47, 0.2));
+}
+.logo-title {
+  font-family: 'Orbitron', 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.logo-sub {
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #ADFF2F;
+  margin: 4px 0 0;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Role Selector */
+.role-selector {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.role-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 12px;
+  background: #141414;
+  border: 2px solid #222;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-family: 'Outfit', sans-serif;
+}
+.role-btn:hover {
+  border-color: #333;
+  background: #1a1a1a;
+}
+.role-btn.active {
+  border-color: #ADFF2F;
+  background: rgba(173, 255, 47, 0.05);
+  box-shadow: 0 0 20px rgba(173, 255, 47, 0.1);
+}
+.role-icon {
+  font-size: 28px;
+}
+.role-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #888;
+  transition: color 0.25s;
+}
+.role-btn.active .role-name {
+  color: #ADFF2F;
+}
+
+/* PIN Display */
+.pin-display {
+  margin-bottom: 24px;
+}
+.pin-dots {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+.pin-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #222;
+  border: 2px solid #333;
+  transition: all 0.2s;
+}
+.pin-dot.filled {
+  background: #ADFF2F;
+  border-color: #ADFF2F;
+  box-shadow: 0 0 10px rgba(173, 255, 47, 0.4);
+}
+.pin-dot.error {
+  border-color: #ef4444;
+  animation: shake 0.4s;
+}
+.pin-dot.error.filled {
+  background: #ef4444;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+}
+.pin-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin-top: 12px;
+  font-family: 'Outfit', sans-serif;
+}
+
+/* Number Pad */
+.numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 280px;
+  margin: 0 auto;
+  transition: opacity 0.2s;
+}
+.numpad.loading {
+  opacity: 0.4;
+  pointer-events: none;
+}
+.numpad-btn {
+  height: 64px;
+  border: none;
+  border-radius: 16px;
+  background: #181818;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.numpad-btn:hover {
+  background: #222;
+}
+.numpad-btn:active {
+  background: #ADFF2F;
+  color: #0a0a0a;
+  transform: scale(0.95);
+}
+.numpad-btn.delete {
+  font-size: 20px;
+  color: #888;
+}
+.numpad-btn.delete:active {
+  background: #ef4444;
+  color: #fff;
+}
+.numpad-spacer {
+  height: 64px;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}

@@ -1,0 +1,135 @@
+.customer-list-page { padding: 16px; }
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.page-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.count {
+  font-family: 'Outfit', sans-serif;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: rgba(173,255,47,0.1);
+  color: #ADFF2F;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: #141414;
+  border: 2px solid #1e1e1e;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  transition: border-color 0.2s;
+}
+.search-bar:focus-within { border-color: #ADFF2F; }
+.search-icon { font-size: 16px; }
+.search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+}
+.search-input::placeholder { color: #444; }
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #121212;
+  border-radius: 16px;
+  border: 1px dashed #222;
+}
+.empty-icon { font-size: 40px; display: block; margin-bottom: 12px; }
+.empty-state p {
+  color: #555;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  margin: 0;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.customer-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 20px;
+}
+.customer-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: #141414;
+  border: 1px solid #1e1e1e;
+  border-radius: 14px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.customer-card:hover { border-color: #2a2a2a; }
+.customer-card:active { transform: scale(0.99); }
+
+.cust-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ADFF2F 0%, #6bbd00 100%);
+  color: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Outfit', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.cust-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.cust-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cust-phone {
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  color: #777;
+}
+.cust-meta {
+  display: flex;
+  gap: 6px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 11px;
+  color: #555;
+}
+.cust-revenue {
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ADFF2F;
+  white-space: nowrap;
+}
