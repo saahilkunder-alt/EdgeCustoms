@@ -146,6 +146,9 @@
   color: #666;
 }
 .hint.success { color: #22c55e; }
+.hint.error { color: #ef4444; }
+.form-input.input-error { border-color: #ef4444; }
+.mt-8 { margin-top: 8px; }
 
 /* Checkbox */
 .checkbox-label {

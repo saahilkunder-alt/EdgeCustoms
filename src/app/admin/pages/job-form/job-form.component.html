@@ -27,10 +27,18 @@
       <div class="form-group">
         <label class="form-label">Phone Number *</label>
         <input type="tel" class="form-input" [(ngModel)]="customerPhone"
-          (ngModelChange)="onPhoneChange()" placeholder="Enter 10-digit number"
-          maxlength="10" inputmode="numeric">
+          (ngModelChange)="onPhoneInput()" (keydown)="onPhoneKeydown($event)"
+          placeholder="Enter 10-digit number"
+          maxlength="10" inputmode="numeric" pattern="[0-9]*"
+          [class.input-error]="phoneError && customerPhone.length > 0">
         @if (existingCustomer) {
           <span class="hint success">✅ Returning customer — auto-filled!</span>
+        }
+        @if (phoneError && customerPhone.length > 0) {
+          <span class="hint error">{{ phoneError }}</span>
+        }
+        @if (isPhoneValid && !existingCustomer) {
+          <span class="hint success">✅ Valid number</span>
         }
       </div>
 
@@ -48,15 +56,28 @@
               <option [value]="brand">{{ brand }}</option>
             }
           </select>
+          @if (isOtherBrand) {
+            <input type="text" class="form-input mt-8" [(ngModel)]="customBrand"
+              placeholder="Type brand name">
+          }
         </div>
         <div class="form-group flex-1">
           <label class="form-label">Model *</label>
-          <select class="form-select" [(ngModel)]="carModel" [disabled]="!carBrand">
-            <option value="">Select Model</option>
-            @for (model of models; track model) {
-              <option [value]="model">{{ model }}</option>
+          @if (isOtherBrand) {
+            <input type="text" class="form-input" [(ngModel)]="customModel"
+              placeholder="Type model name">
+          } @else {
+            <select class="form-select" [(ngModel)]="carModel" [disabled]="!carBrand">
+              <option value="">Select Model</option>
+              @for (model of models; track model) {
+                <option [value]="model">{{ model }}</option>
+              }
+            </select>
+            @if (carModel === 'Custom' || carModel === 'Other') {
+              <input type="text" class="form-input mt-8" [(ngModel)]="customModel"
+                placeholder="Type model name">
             }
-          </select>
+          }
         </div>
       </div>
 
@@ -74,6 +95,10 @@
               <option [value]="color">{{ color }}</option>
             }
           </select>
+          @if (isOtherColor) {
+            <input type="text" class="form-input mt-8" [(ngModel)]="customColor"
+              placeholder="Type color name">
+          }
         </div>
       </div>
 
@@ -186,7 +211,7 @@
         <h3 class="review-heading">Vehicle</h3>
         <div class="review-row">
           <span class="review-label">Car</span>
-          <span class="review-value">{{ carBrand }} {{ carModel }}</span>
+          <span class="review-value">{{ effectiveBrand }} {{ effectiveModel }}</span>
         </div>
         <div class="review-row">
           <span class="review-label">Reg. No.</span>
@@ -194,7 +219,7 @@
         </div>
         <div class="review-row">
           <span class="review-label">Color</span>
-          <span class="review-value">{{ carColor || '—' }}</span>
+          <span class="review-value">{{ effectiveColor || '—' }}</span>
         </div>
         <div class="review-row">
           <span class="review-label">Odometer</span>

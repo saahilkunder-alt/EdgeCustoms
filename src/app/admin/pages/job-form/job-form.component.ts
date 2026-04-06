@@ -31,10 +31,14 @@ export class JobFormComponent implements OnInit {
   customerName = '';
   carBrand = '';
   carModel = '';
+  customBrand = '';
+  customModel = '';
+  customColor = '';
   registrationNumber = '';
   carColor = '';
   odometerReading: number | null = null;
   fuelLevel = 50;
+  phoneError = '';
 
   // Step 2 - Services
   serviceCategories: { name: ServiceCategory; services: ServiceItem[] }[] = [];
@@ -67,13 +71,17 @@ export class JobFormComponent implements OnInit {
   }
 
   // Step 1 helpers
-  onPhoneChange(): void {
-    if (this.customerPhone.length >= 10) {
+  onPhoneInput(): void {
+    // Strip non-digits
+    this.customerPhone = this.customerPhone.replace(/\D/g, '').slice(0, 10);
+    this.phoneError = '';
+    this.existingCustomer = false;
+
+    if (this.customerPhone.length === 10) {
       const customer = this.storage.getCustomerByPhone(this.customerPhone);
       if (customer) {
         this.customerName = customer.name;
         this.existingCustomer = true;
-        // Auto-fill last vehicle if available
         if (customer.vehicles.length > 0) {
           const lastVehicle = customer.vehicles[customer.vehicles.length - 1];
           this.carBrand = lastVehicle.brand;
@@ -82,17 +90,61 @@ export class JobFormComponent implements OnInit {
           this.registrationNumber = lastVehicle.registrationNumber;
           this.carColor = lastVehicle.color;
         }
-      } else {
-        this.existingCustomer = false;
       }
+    } else if (this.customerPhone.length > 0 && this.customerPhone.length < 10) {
+      this.phoneError = `${10 - this.customerPhone.length} more digits needed`;
+    }
+  }
+
+  get isPhoneValid(): boolean {
+    return this.customerPhone.length === 10;
+  }
+
+  get isOtherBrand(): boolean {
+    return this.carBrand === 'Other';
+  }
+
+  get isOtherModel(): boolean {
+    return this.carModel === 'Other' || this.carModel === 'Custom' || (this.isOtherBrand && !!this.customBrand);
+  }
+
+  get isOtherColor(): boolean {
+    return this.carColor === 'Other';
+  }
+
+  get effectiveBrand(): string {
+    return this.isOtherBrand ? this.customBrand : this.carBrand;
+  }
+
+  get effectiveModel(): string {
+    return (this.carModel === 'Other' || this.carModel === 'Custom' || this.isOtherBrand) ? this.customModel : this.carModel;
+  }
+
+  get effectiveColor(): string {
+    return this.isOtherColor ? this.customColor : this.carColor;
+  }
+
+  onPhoneKeydown(event: KeyboardEvent): void {
+    // Allow: backspace, delete, tab, escape, enter, arrows
+    const allowed = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (allowed.includes(event.key)) return;
+    // Allow Ctrl/Cmd+A, C, V, X
+    if ((event.ctrlKey || event.metaKey) && ['a', 'c', 'v', 'x'].includes(event.key.toLowerCase())) return;
+    // Block anything that's not a digit
+    if (!/^[0-9]$/.test(event.key)) {
+      event.preventDefault();
     }
   }
 
   onBrandChange(): void {
-    this.models = CAR_BRANDS[this.carBrand] || [];
+    const brandModels = CAR_BRANDS[this.carBrand] || [];
+    // Ensure 'Other' is always available as a model option
+    this.models = brandModels.includes('Other') ? [...brandModels] : [...brandModels, 'Other'];
     if (!this.models.includes(this.carModel)) {
       this.carModel = '';
     }
+    this.customBrand = '';
+    this.customModel = '';
   }
 
   // Step 2 helpers
@@ -152,7 +204,14 @@ export class JobFormComponent implements OnInit {
 
   get canProceed(): boolean {
     switch (this.currentStep) {
-      case 1: return !!(this.customerName && this.customerPhone && this.carBrand && this.carModel && this.registrationNumber);
+      case 1: {
+        const hasPhone = this.isPhoneValid;
+        const hasName = !!this.customerName;
+        const hasBrand = this.isOtherBrand ? !!this.customBrand : !!this.carBrand;
+        const hasModel = (this.carModel === 'Custom' || this.isOtherBrand) ? !!this.customModel : !!this.carModel;
+        const hasReg = !!this.registrationNumber;
+        return hasPhone && hasName && hasBrand && hasModel && hasReg;
+      }
       case 2: return this.selectedServices.length > 0;
       case 3: return true;
       case 4: return true;
@@ -168,10 +227,10 @@ export class JobFormComponent implements OnInit {
       updatedAt: new Date().toISOString(),
       customerName: this.customerName,
       customerPhone: this.customerPhone,
-      carBrand: this.carBrand,
-      carModel: this.carModel,
+      carBrand: this.effectiveBrand,
+      carModel: this.effectiveModel,
       registrationNumber: this.registrationNumber.toUpperCase(),
-      carColor: this.carColor,
+      carColor: this.effectiveColor,
       odometerReading: this.odometerReading,
       fuelLevel: this.fuelLevel,
       selectedServices: this.selectedServices,
