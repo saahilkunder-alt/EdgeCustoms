@@ -23,6 +23,6 @@ export class AdminLayoutComponent {
 
   logout(): void {
     this.auth.logout();
-    this.router.navigate(['/admin/login']);
+    this.router.navigate(['/edge-staff/login']);
   }
 }

@@ -18,7 +18,7 @@
   } @else {
     <div class="customer-cards">
       @for (cust of filteredCustomers; track cust.id) {
-        <a [routerLink]="['/admin/customers', cust.id]" class="customer-card">
+        <a [routerLink]="['/edge-staff/customers', cust.id]" class="customer-card">
           <div class="cust-avatar">{{ cust.name.charAt(0).toUpperCase() }}</div>
           <div class="cust-info">
             <span class="cust-name">{{ cust.name }}</span>

@@ -31,7 +31,7 @@ export class CustomerDetailComponent implements OnInit {
       }
     }
     if (!this.customer) {
-      this.router.navigate(['/admin/customers']);
+      this.router.navigate(['/edge-staff/customers']);
     }
   }
 

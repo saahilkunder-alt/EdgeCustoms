@@ -57,7 +57,7 @@ export class JobDetailComponent implements OnInit {
       }
     }
     if (!this.job) {
-      this.router.navigate(['/admin/jobs']);
+      this.router.navigate(['/edge-staff/jobs']);
     }
   }
 

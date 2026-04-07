@@ -253,6 +253,6 @@ export class JobFormComponent implements OnInit {
     };
 
     this.storage.createJob(job);
-    this.router.navigate(['/admin/jobs', job.id]);
+    this.router.navigate(['/edge-staff/jobs', job.id]);
   }
 }

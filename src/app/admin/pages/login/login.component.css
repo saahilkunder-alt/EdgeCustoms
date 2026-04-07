@@ -82,88 +82,105 @@
   color: #ADFF2F;
 }
 
-/* PIN Display */
-.pin-display {
-  margin-bottom: 24px;
-}
-.pin-dots {
+/* Secret Key Input */
+.login-form {
   display: flex;
-  justify-content: center;
-  gap: 16px;
+  flex-direction: column;
+  gap: 20px;
 }
-.pin-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #222;
-  border: 2px solid #333;
-  transition: all 0.2s;
+
+.input-group {
+  position: relative;
+  width: 100%;
 }
-.pin-dot.filled {
-  background: #ADFF2F;
+
+.key-input {
+  width: 100%;
+  padding: 16px 48px 16px 16px;
+  background: #141414;
+  border: 2px solid #222;
+  border-radius: 14px;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: all 0.25s;
+  letter-spacing: 0.5px;
+}
+
+.key-input:focus {
   border-color: #ADFF2F;
-  box-shadow: 0 0 10px rgba(173, 255, 47, 0.4);
+  background: #1a1a1a;
+  box-shadow: 0 0 20px rgba(173, 255, 47, 0.05);
 }
-.pin-dot.error {
+
+.input-group.error .key-input {
   border-color: #ef4444;
   animation: shake 0.4s;
 }
-.pin-dot.error.filled {
-  background: #ef4444;
-  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
-}
-.pin-error {
-  color: #ef4444;
-  font-size: 13px;
-  margin-top: 12px;
-  font-family: 'Outfit', sans-serif;
+
+.input-icon {
+  position: absolute;
+  right: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  opacity: 0.5;
 }
 
-/* Number Pad */
-.numpad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  max-width: 280px;
-  margin: 0 auto;
-  transition: opacity 0.2s;
-}
-.numpad.loading {
-  opacity: 0.4;
-  pointer-events: none;
-}
-.numpad-btn {
-  height: 64px;
-  border: none;
-  border-radius: 16px;
-  background: #181818;
-  color: #fff;
+.login-error {
+  color: #ef4444;
+  font-size: 13px;
+  margin: -10px 0 0;
   font-family: 'Outfit', sans-serif;
-  font-size: 24px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s;
-  user-select: none;
-  -webkit-tap-highlight-color: transparent;
+  text-align: center;
 }
-.numpad-btn:hover {
-  background: #222;
-}
-.numpad-btn:active {
+
+.login-btn {
+  width: 100%;
+  padding: 16px;
   background: #ADFF2F;
   color: #0a0a0a;
-  transform: scale(0.95);
+  border: none;
+  border-radius: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.numpad-btn.delete {
-  font-size: 20px;
-  color: #888;
+
+.login-btn:hover:not(:disabled) {
+  background: #9add29;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(173, 255, 47, 0.2);
 }
-.numpad-btn.delete:active {
-  background: #ef4444;
-  color: #fff;
+
+.login-btn:active:not(:disabled) {
+  transform: scale(0.98);
 }
-.numpad-spacer {
-  height: 64px;
+
+.login-btn:disabled {
+  background: #1a2a0a;
+  color: #444;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0,0,0,0.1);
+  border-top-color: #0a0a0a;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 @keyframes shake {

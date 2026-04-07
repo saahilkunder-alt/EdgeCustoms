@@ -29,7 +29,7 @@
   } @else {
     <div class="jobs-list">
       @for (job of filteredJobs; track job.id) {
-        <a [routerLink]="['/admin/jobs', job.id]" class="job-card">
+        <a [routerLink]="['/edge-staff/jobs', job.id]" class="job-card">
           <div class="job-top">
             <span class="job-id">{{ job.id }}</span>
             <app-status-badge [status]="job.status" />

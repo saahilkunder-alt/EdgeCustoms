@@ -9,7 +9,7 @@ import { SunfilmsComponent } from './pages/sunfilms/sunfilms.component';
 import { CodingComponent } from './pages/coding/coding.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'admin', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'services/ppf', component: PpfComponent },
   { path: 'services/ceramic', component: CeramicComponent },
@@ -19,8 +19,9 @@ export const routes: Routes = [
   { path: 'services/sunfilms', component: SunfilmsComponent },
   { path: 'services/coding', component: CodingComponent },
   {
-    path: 'admin',
+    path: 'edge-staff',
     loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES)
   },
-  { path: '**', redirectTo: 'admin' }
+  { path: 'admin', redirectTo: 'home' },
+  { path: '**', redirectTo: 'home' }
 ];

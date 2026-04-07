@@ -1,6 +1,6 @@
 @if (customer) {
 <div class="customer-detail">
-  <a routerLink="/admin/customers" class="back-link">← Back</a>
+  <a routerLink="/edge-staff/customers" class="back-link">← Back</a>
 
   <!-- Profile -->
   <div class="profile-header">
@@ -49,7 +49,7 @@
     } @else {
       <div class="jobs-list">
         @for (job of jobs; track job.id) {
-          <a [routerLink]="['/admin/jobs', job.id]" class="job-card">
+          <a [routerLink]="['/edge-staff/jobs', job.id]" class="job-card">
             <div class="job-top">
               <span class="job-id">{{ job.id }}</span>
               <app-status-badge [status]="job.status" />

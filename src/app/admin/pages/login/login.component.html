@@ -19,31 +19,35 @@
       </button>
     </div>
 
-    <!-- PIN Display -->
-    <div class="pin-display">
-      <div class="pin-dots">
-        @for (i of [0,1,2,3]; track i) {
-          <div class="pin-dot" [class.filled]="pin.length > i" [class.error]="error"></div>
-        }
+    <!-- Secret Key Input -->
+    <div class="login-form">
+      <div class="input-group" [class.error]="error">
+        <input 
+          type="password" 
+          [(ngModel)]="pin" 
+          placeholder="Enter 21-character key" 
+          class="key-input"
+          [disabled]="isLoading"
+          (keyup.enter)="login()"
+          maxlength="21">
+        <span class="input-icon">🔒</span>
       </div>
+      
       @if (error) {
-        <p class="pin-error">{{ error }}</p>
+        <p class="login-error">{{ error }}</p>
       }
-    </div>
 
-    <!-- Number Pad -->
-    <div class="numpad" [class.loading]="isLoading">
-      @for (num of ['1','2','3','4','5','6','7','8','9','','0','del']; track num) {
-        @if (num === '') {
-          <div class="numpad-spacer"></div>
-        } @else if (num === 'del') {
-          <button class="numpad-btn delete" (click)="deleteDigit()">
-            ⌫
-          </button>
+      <button 
+        class="login-btn" 
+        [class.loading]="isLoading" 
+        [disabled]="isLoading || pin.length < 21"
+        (click)="login()">
+        @if (isLoading) {
+          <span class="spinner"></span>
         } @else {
-          <button class="numpad-btn" (click)="addDigit(num)">{{ num }}</button>
+          Login to Portal
         }
-      }
+      </button>
     </div>
   </div>
 </div>

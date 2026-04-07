@@ -66,7 +66,7 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         // Check if admin route
-        this.isAdminRoute = event.urlAfterRedirects.startsWith('/admin');
+        this.isAdminRoute = event.urlAfterRedirects.startsWith('/edge-staff');
         // Close menus on navigation
         this.isServicesExpanded = false;
         this.isMobileMenuOpen = false;

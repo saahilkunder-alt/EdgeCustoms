@@ -10,6 +10,6 @@ export const adminGuard: CanActivateFn = () => {
     return true;
   }
 
-  router.navigate(['/admin/login']);
+  router.navigate(['/edge-staff/login']);
   return false;
 };

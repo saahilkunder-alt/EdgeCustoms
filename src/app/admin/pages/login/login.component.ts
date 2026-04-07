@@ -10,12 +10,15 @@ import { UserRole } from '../../models/job.model';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  selectedRole: UserRole = 'admin';
+  selectedRole: UserRole | null = 'admin';
   pin = '';
   error = '';
   isLoading = false;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router
+  ) {}
 
   selectRole(role: UserRole): void {
     this.selectedRole = role;
@@ -23,32 +26,27 @@ export class LoginComponent {
     this.error = '';
   }
 
-  addDigit(digit: string): void {
-    if (this.pin.length < 4) {
-      this.pin += digit;
-      this.error = '';
+  async login(): Promise<void> {
+    if (!this.selectedRole || !this.pin) {
+      this.error = 'Please enter your 21-character key.';
+      return;
     }
-    if (this.pin.length === 4) {
-      this.attemptLogin();
-    }
-  }
-
-  deleteDigit(): void {
-    this.pin = this.pin.slice(0, -1);
-    this.error = '';
-  }
-
-  private attemptLogin(): void {
+    
     this.isLoading = true;
-    setTimeout(() => {
-      const success = this.auth.login(this.selectedRole, this.pin);
+    this.error = '';
+
+    try {
+      const success = await this.auth.login(this.selectedRole, this.pin);
       this.isLoading = false;
       if (success) {
-        this.router.navigate(['/admin']);
+        this.router.navigate(['/edge-staff']);
       } else {
-        this.error = 'Invalid PIN. Try again.';
+        this.error = 'Invalid Key. Please check the 21-character secret.';
         this.pin = '';
       }
-    }, 300);
+    } catch (e) {
+      this.isLoading = false;
+      this.error = 'Secure authentication failed. Please try again.';
+    }
   }
 }

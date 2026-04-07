@@ -38,11 +38,11 @@
 
   <!-- Quick Actions -->
   <div class="quick-actions">
-    <a routerLink="/admin/jobs/new" class="action-btn primary">
+    <a routerLink="/edge-staff/jobs/new" class="action-btn primary">
       <span class="action-icon">+</span>
       <span>New Job Card</span>
     </a>
-    <a routerLink="/admin/customers" class="action-btn secondary">
+    <a routerLink="/edge-staff/customers" class="action-btn secondary">
       <span class="action-icon">🔍</span>
       <span>Search Customer</span>
     </a>
@@ -52,7 +52,7 @@
   <div class="section">
     <div class="section-header">
       <h2 class="section-title">Recent Jobs</h2>
-      <a routerLink="/admin/jobs" class="see-all">See All →</a>
+      <a routerLink="/edge-staff/jobs" class="see-all">See All →</a>
     </div>
 
     @if (recentJobs.length === 0) {
@@ -63,7 +63,7 @@
     } @else {
       <div class="jobs-list">
         @for (job of recentJobs; track job.id) {
-          <a [routerLink]="['/admin/jobs', job.id]" class="job-card">
+          <a [routerLink]="['/edge-staff/jobs', job.id]" class="job-card">
             <div class="job-top">
               <span class="job-id">{{ job.id }}</span>
               <app-status-badge [status]="job.status" />
