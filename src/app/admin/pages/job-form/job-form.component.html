@@ -122,6 +122,10 @@
         <span class="total-amount">₹{{ subtotal.toLocaleString() }}</span>
       </div>
 
+      @if (servicesMissingPrice > 0) {
+        <span class="hint error" style="margin-bottom: 12px;">⚠ {{ servicesMissingPrice }} service{{ servicesMissingPrice > 1 ? 's' : '' }} still need{{ servicesMissingPrice === 1 ? 's' : '' }} a price</span>
+      }
+
       <div class="service-categories">
         @for (cat of serviceCategories; track cat.name) {
           <div class="category-group" [class.expanded]="expandedCategory === cat.name">
@@ -138,15 +142,27 @@
             @if (expandedCategory === cat.name) {
               <div class="category-services">
                 @for (svc of cat.services; track svc.id) {
-                  <button class="service-card" [class.selected]="svc.selected" (click)="toggleService(svc)">
-                    <div class="svc-check">
-                      @if (svc.selected) { ✓ } @else { ○ }
-                    </div>
-                    <div class="svc-info">
-                      <span class="svc-name">{{ svc.name }}</span>
-                      <span class="svc-price">₹{{ svc.price.toLocaleString() }}</span>
-                    </div>
-                  </button>
+                  <div class="service-card-wrap">
+                    <button class="service-card" [class.selected]="svc.selected" (click)="toggleService(svc)">
+                      <div class="svc-check">
+                        @if (svc.selected) { ✓ } @else { ○ }
+                      </div>
+                      <div class="svc-info">
+                        <span class="svc-name">{{ svc.name }}</span>
+                        @if (svc.price > 0) {
+                          <span class="svc-price">₹{{ svc.price.toLocaleString() }}</span>
+                        }
+                      </div>
+                    </button>
+                    @if (svc.selected) {
+                      <div class="svc-price-input" [class.price-missing]="!svc.price || svc.price <= 0">
+                        <span class="price-label">₹</span>
+                        <input type="number" [(ngModel)]="svc.price" placeholder="Enter price *"
+                          inputmode="numeric" min="0" (click)="$event.stopPropagation()"
+                          [class.input-error]="!svc.price || svc.price <= 0">
+                      </div>
+                    }
+                  </div>
                 }
               </div>
             }
@@ -162,7 +178,7 @@
       <h2 class="step-title">Photos & Remarks</h2>
 
       <app-photo-upload
-        label="Before Photos (optional)"
+        label="Before Photos *"
         [photos]="beforePhotos"
         (photosChange)="beforePhotos = $event"
         [maxPhotos]="5" />
@@ -175,17 +191,16 @@
       </div>
 
       <div class="form-group">
-        <label class="checkbox-label">
+        <label class="checkbox-label" [class.checkbox-error]="!customerAcknowledged && beforePhotos.length > 0">
           <input type="checkbox" [(ngModel)]="customerAcknowledged">
           <span class="check-box"></span>
-          <span>Customer has acknowledged vehicle condition</span>
+          <span>Customer has acknowledged vehicle condition <strong style="color: var(--accent);">*</strong></span>
         </label>
+        @if (!customerAcknowledged && beforePhotos.length > 0) {
+          <span class="hint error">⚠ Customer acknowledgement is required to proceed</span>
+        }
       </div>
 
-      <app-signature-pad (signatureSaved)="onSignatureSaved($event)" />
-      @if (signatureDataUrl) {
-        <p class="hint success" style="margin-top: 8px;">✅ Signature captured</p>
-      }
     </div>
   }
 

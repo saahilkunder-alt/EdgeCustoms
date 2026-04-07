@@ -5,7 +5,7 @@ import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
 import { FuelGaugeComponent } from '../../components/fuel-gauge/fuel-gauge.component';
 import { PhotoUploadComponent } from '../../components/photo-upload/photo-upload.component';
-import { SignaturePadComponent } from '../../components/signature-pad/signature-pad.component';
+
 import {
   JobCard, JobStatus, ServiceItem, DEFAULT_SERVICES, CAR_BRANDS, CAR_COLORS,
   ServiceCategory
@@ -14,7 +14,7 @@ import {
 @Component({
   selector: 'app-job-form',
   standalone: true,
-  imports: [FormsModule, FuelGaugeComponent, PhotoUploadComponent, SignaturePadComponent],
+  imports: [FormsModule, FuelGaugeComponent, PhotoUploadComponent],
   templateUrl: './job-form.component.html',
   styleUrl: './job-form.component.css'
 })
@@ -48,7 +48,7 @@ export class JobFormComponent implements OnInit {
   beforePhotos: string[] = [];
   remarks = '';
   customerAcknowledged = false;
-  signatureDataUrl = '';
+
 
   // Step 4 - Pricing
   discountType: 'flat' | 'percent' = 'flat';
@@ -170,10 +170,12 @@ export class JobFormComponent implements OnInit {
     return cat.services.filter(s => s.selected).length;
   }
 
-  // Step 3 helpers
-  onSignatureSaved(dataUrl: string): void {
-    this.signatureDataUrl = dataUrl;
+  get servicesMissingPrice(): number {
+    return this.selectedServices.filter(s => !s.price || s.price <= 0).length;
   }
+
+  // Step 3 helpers
+
 
   // Step 4 helpers
   get discountAmount(): number {
@@ -212,8 +214,8 @@ export class JobFormComponent implements OnInit {
         const hasReg = !!this.registrationNumber;
         return hasPhone && hasName && hasBrand && hasModel && hasReg;
       }
-      case 2: return this.selectedServices.length > 0;
-      case 3: return true;
+      case 2: return this.selectedServices.length > 0 && this.selectedServices.every(s => s.price > 0);
+      case 3: return this.beforePhotos.length > 0 && this.customerAcknowledged;
       case 4: return true;
       default: return false;
     }
@@ -238,7 +240,7 @@ export class JobFormComponent implements OnInit {
       afterPhotos: [],
       remarks: this.remarks,
       customerAcknowledged: this.customerAcknowledged,
-      signatureDataUrl: this.signatureDataUrl,
+      signatureDataUrl: '',
       status: JobStatus.Received,
       subtotal: this.subtotal,
       discountType: this.discountType,

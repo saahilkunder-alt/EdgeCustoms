@@ -166,6 +166,10 @@
   transition: border-color 0.2s;
 }
 .checkbox-label:hover { border-color: #333; }
+.checkbox-label.checkbox-error {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.05);
+}
 .checkbox-label input { display: none; }
 .check-box {
   width: 22px;
@@ -323,6 +327,52 @@
 }
 .service-card.selected .svc-name { color: #fff; }
 .service-card.selected .svc-price { color: #ADFF2F; }
+
+/* Service card wrapper & price input */
+.service-card-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.svc-price-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(173, 255, 47, 0.03);
+  border: 2px solid rgba(173, 255, 47, 0.15);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  animation: fadeIn 0.2s ease;
+}
+.svc-price-input .price-label {
+  font-family: 'Outfit', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ADFF2F;
+}
+.svc-price-input input {
+  flex: 1;
+  background: #141414;
+  border: 1px solid #2a2a2a;
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: #fff;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.svc-price-input input:focus { border-color: #ADFF2F; }
+.svc-price-input input::placeholder { color: #555; }
+.svc-price-input.price-missing {
+  border-color: rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.03);
+}
+.svc-price-input.price-missing input { border-color: #ef4444; }
+.service-card-wrap .service-card.selected {
+  border-radius: 10px 10px 0 0;
+}
 
 /* Review Section */
 .review-section {

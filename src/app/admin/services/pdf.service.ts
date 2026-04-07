@@ -42,7 +42,6 @@ export class PdfService {
     const statusColors: Record<string, [number, number, number]> = {
       'Received': [59, 130, 246],
       'In Progress': [245, 158, 11],
-      'Waiting': [234, 179, 8],
       'Completed': [34, 197, 94],
       'Delivered': [107, 114, 128]
     };
@@ -160,17 +159,6 @@ export class PdfService {
       y += lines.length * 5 + 4;
     }
 
-    // ── Signature ──
-    if (job.signatureDataUrl) {
-      if (y > 230) { doc.addPage(); y = margin; }
-      sectionHeader('CUSTOMER SIGNATURE');
-      try {
-        doc.addImage(job.signatureDataUrl, 'PNG', margin + 4, y, 50, 20);
-        y += 24;
-      } catch {
-        addRow('Signature', 'On file');
-      }
-    }
 
     // ── Footer ──
     const footerY = doc.internal.pageSize.getHeight() - 15;

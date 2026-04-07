@@ -26,6 +26,8 @@ export class JobDetailComponent implements OnInit {
   isAdmin = false;
   showPaymentForm = false;
   showEditHistory = false;
+  showConfirmModal = false;
+  pendingStatus: JobStatus | null = null;
 
   // Payment form
   paymentMode: PaymentMode = 'UPI';
@@ -37,10 +39,13 @@ export class JobDetailComponent implements OnInit {
   statusFlow: JobStatus[] = [
     JobStatus.Received,
     JobStatus.InProgress,
-    JobStatus.Waiting,
     JobStatus.Completed,
     JobStatus.Delivered
   ];
+
+  get isPaid(): boolean {
+    return !!this.job?.payment;
+  }
 
   ngOnInit(): void {
     this.isAdmin = this.auth.isAdmin;
@@ -58,7 +63,45 @@ export class JobDetailComponent implements OnInit {
 
   updateStatus(status: JobStatus): void {
     if (!this.job) return;
+
+    // Prevent changing back from Completed or Delivered
+    if (this.job.status === JobStatus.Completed || this.job.status === JobStatus.Delivered) {
+      if (status === JobStatus.Received || status === JobStatus.InProgress) {
+        return;
+      }
+    }
+
+    // Prevent changing to Delivered if not paid
+    if (status === JobStatus.Delivered && !this.isPaid) {
+      this.showPaymentForm = true;
+      return;
+    }
+
+    if (status === JobStatus.Completed && this.job.status !== JobStatus.Completed) {
+      this.pendingStatus = status;
+      this.showConfirmModal = true;
+      return;
+    }
+
     this.job = this.storage.updateJob(this.job.id, { status }, this.auth.currentRole || 'staff');
+  }
+
+  confirmStatusUpdate(): void {
+    if (!this.job || !this.pendingStatus) return;
+    this.job = this.storage.updateJob(this.job.id, { status: this.pendingStatus }, this.auth.currentRole || 'staff');
+    
+    // Auto-expand payment form if changed to Completed
+    if (this.pendingStatus === JobStatus.Completed && !this.isPaid) {
+      this.showPaymentForm = true;
+    }
+
+    this.showConfirmModal = false;
+    this.pendingStatus = null;
+  }
+
+  cancelStatusUpdate(): void {
+    this.showConfirmModal = false;
+    this.pendingStatus = null;
   }
 
   onAfterPhotosChange(photos: string[]): void {
@@ -71,7 +114,7 @@ export class JobDetailComponent implements OnInit {
   }
 
   savePayment(): void {
-    if (!this.job) return;
+    if (!this.job || this.paymentAmount <= 0) return;
     this.job = this.storage.updateJob(this.job.id, {
       payment: {
         mode: this.paymentMode,
@@ -85,11 +128,17 @@ export class JobDetailComponent implements OnInit {
 
   async downloadPdf(): Promise<void> {
     if (!this.job) return;
+    if (this.job.status === JobStatus.Completed && !this.isPaid) {
+      return;
+    }
     await this.pdf.generateJobCardPdf(this.job);
   }
 
   shareWhatsApp(): void {
     if (!this.job) return;
+    if (this.job.status === JobStatus.Completed && !this.isPaid) {
+      return;
+    }
     const msg = this.pdf.generateWhatsAppMessage(this.job);
     window.open(`https://wa.me/${this.job.customerPhone}?text=${msg}`, '_blank');
   }

@@ -19,9 +19,13 @@
           [class.active]="job.status === status"
           [class.received]="status === 'Received'"
           [class.inprogress]="status === 'In Progress'"
-          [class.waiting]="status === 'Waiting'"
           [class.completed]="status === 'Completed'"
           [class.delivered]="status === 'Delivered'"
+          [disabled]="
+            ( (status === 'Received' || status === 'In Progress') && (job.status === 'Completed' || job.status === 'Delivered') ) ||
+            ( status === 'Completed' && job.status === 'Delivered' ) ||
+            ( status === 'Delivered' && (job.status === 'Completed' && !isPaid) )
+          "
           (click)="updateStatus(status)">
           {{ status }}
         </button>
@@ -97,7 +101,8 @@
   </div>
 
   <!-- Payment -->
-  <div class="info-card">
+  @if (job.status === 'Completed' || job.status === 'Delivered') {
+    <div class="info-card">
     <h3 class="card-title">💳 Payment</h3>
     @if (job.payment) {
       <div class="info-row">
@@ -145,11 +150,12 @@
             <label class="form-label">Transaction ID (optional)</label>
             <input type="text" class="form-input" [(ngModel)]="paymentTxnId" placeholder="UPI ref / Card auth">
           </div>
-          <button class="action-btn confirm" (click)="savePayment()">✓ Confirm Payment</button>
+          <button class="action-btn confirm" (click)="savePayment()" [disabled]="!paymentAmount || paymentAmount <= 0">✓ Confirm Payment</button>
         </div>
       }
     }
-  </div>
+    </div>
+  }
 
   <!-- Before Photos -->
   @if (job.beforePhotos && job.beforePhotos.length > 0) {
@@ -183,9 +189,12 @@
 
   <!-- Actions -->
   <div class="actions-section">
-    <button class="action-btn pdf" (click)="downloadPdf()">📄 Download PDF</button>
-    <button class="action-btn whatsapp" (click)="shareWhatsApp()">💬 WhatsApp</button>
+    <button class="action-btn pdf" [disabled]="job.status === 'Completed' && !isPaid" (click)="downloadPdf()">📄 Download PDF</button>
+    <button class="action-btn whatsapp" [disabled]="job.status === 'Completed' && !isPaid" (click)="shareWhatsApp()">💬 WhatsApp</button>
   </div>
+  @if (job.status === 'Completed' && !isPaid) {
+    <p class="action-hint">⚠️ Please record payment to enable Download/Share.</p>
+  }
 
   <!-- Edit History -->
   @if (job.editHistory && job.editHistory.length > 0) {
@@ -205,6 +214,21 @@
           }
         </div>
       }
+    </div>
+  }
+
+  <!-- Confirmation Modal -->
+  @if (showConfirmModal) {
+    <div class="modal-overlay" (click)="cancelStatusUpdate()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-icon">⚠️</div>
+        <h3 class="modal-title">Confirm Status Change</h3>
+        <p class="modal-message">Are you sure you want to mark this job as <strong>Completed</strong>?</p>
+        <div class="modal-actions">
+          <button class="modal-btn cancel" (click)="cancelStatusUpdate()">No, Cancel</button>
+          <button class="modal-btn confirm" (click)="confirmStatusUpdate()">Yes, Complete It</button>
+        </div>
+      </div>
     </div>
   }
 </div>

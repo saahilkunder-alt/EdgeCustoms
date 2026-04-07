@@ -10,7 +10,7 @@ import { UserRole } from '../../models/job.model';
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
-  selectedRole: UserRole = 'staff';
+  selectedRole: UserRole = 'admin';
   pin = '';
   error = '';
   isLoading = false;

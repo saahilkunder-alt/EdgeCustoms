@@ -20,7 +20,7 @@ export class JobListComponent implements OnInit {
   searchQuery = '';
   activeFilter: string = 'All';
 
-  statusFilters = ['All', 'Received', 'In Progress', 'Waiting', 'Completed', 'Delivered'];
+  statusFilters = ['All', 'Received', 'In Progress', 'Completed', 'Delivered'];
 
   ngOnInit(): void {
     this.allJobs = this.storage.getAllJobs();
