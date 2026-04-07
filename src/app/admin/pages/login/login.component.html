@@ -25,11 +25,13 @@
         <input 
           type="password" 
           [(ngModel)]="pin" 
-          placeholder="Enter 21-character key" 
+          placeholder="Enter 4-digit PIN" 
           class="key-input"
           [disabled]="isLoading"
           (keyup.enter)="login()"
-          maxlength="21">
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="4">
         <span class="input-icon">🔒</span>
       </div>
       
@@ -40,7 +42,7 @@
       <button 
         class="login-btn" 
         [class.loading]="isLoading" 
-        [disabled]="isLoading || pin.length < 21"
+        [disabled]="isLoading || pin.length !== 4"
         (click)="login()">
         @if (isLoading) {
           <span class="spinner"></span>

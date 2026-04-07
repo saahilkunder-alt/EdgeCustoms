@@ -8,12 +8,11 @@ interface AuthState {
 }
 
 // Simple PIN-based auth (no backend)
-// SHA1 hashes of the 21-character keys
-// Admin: EDGE-PRIME-2026-PORTA -> a46e00327616de0fbba46e65205adc3a05963f4e
-// Staff: EDGE-STAFF-2026-ACCESS -> d2f988b0bd099cf028190e7122cab94c29f47f2b
+// SHA1 hashes of the 4-digit PINs
+// Password: 1234 -> 7110eda4d09e062aa5e4a390b0a572ac0d2c0220
 const CREDENTIALS: { [key in UserRole]: string } = {
-  admin: 'a46e00327616de0fbba46e65205adc3a05963f4e',
-  staff: 'd2f988b0bd099cf028190e7122cab94c29f47f2b'
+  admin: '7110eda4d09e062aa5e4a390b0a572ac0d2c0220',
+  staff: '7110eda4d09e062aa5e4a390b0a572ac0d2c0220'
 };
 
 const SESSION_KEY = 'ec_auth_session';

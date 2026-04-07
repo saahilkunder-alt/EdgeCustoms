@@ -3,9 +3,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { UserRole } from '../../models/job.model';
 
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-login',
   standalone: true,
+  imports: [FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -28,7 +31,7 @@ export class LoginComponent {
 
   async login(): Promise<void> {
     if (!this.selectedRole || !this.pin) {
-      this.error = 'Please enter your 21-character key.';
+      this.error = 'Please enter your 4-digit PIN.';
       return;
     }
     
@@ -41,7 +44,7 @@ export class LoginComponent {
       if (success) {
         this.router.navigate(['/edge-staff']);
       } else {
-        this.error = 'Invalid Key. Please check the 21-character secret.';
+        this.error = 'Invalid PIN. Please check your 4-digit code.';
         this.pin = '';
       }
     } catch (e) {
