@@ -47,9 +47,15 @@
   </div>
 
   <div class="info-card">
-    <h3 class="card-title">🚗 Vehicle</h3>
+    <h3 class="card-title">{{ job.vehicleCategory === 'Bike' ? '🏍️' : '🚗' }} Vehicle</h3>
+    @if (job.vehicleCategory && job.vehicleType) {
+      <div class="info-row">
+        <span class="info-label">Type</span>
+        <span class="info-value">{{ job.vehicleCategory }} — {{ job.vehicleType }}</span>
+      </div>
+    }
     <div class="info-row">
-      <span class="info-label">Car</span>
+      <span class="info-label">{{ job.vehicleCategory === 'Bike' ? 'Bike' : 'Car' }}</span>
       <span class="info-value">{{ job.carBrand }} {{ job.carModel }}</span>
     </div>
     <div class="info-row">

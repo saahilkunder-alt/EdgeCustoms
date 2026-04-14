@@ -7,8 +7,9 @@ import { FuelGaugeComponent } from '../../components/fuel-gauge/fuel-gauge.compo
 import { PhotoUploadComponent } from '../../components/photo-upload/photo-upload.component';
 
 import {
-  JobCard, JobStatus, ServiceItem, DEFAULT_SERVICES, CAR_BRANDS, CAR_COLORS,
-  ServiceCategory
+  JobCard, JobStatus, ServiceItem, ServiceCatalogItem, SERVICE_CATALOG,
+  CAR_BRANDS, BIKE_BRANDS, CAR_COLORS, BIKE_COLORS, CAR_TYPES, BIKE_TYPES,
+  ServiceCategory, VehicleCategory, VehicleType, CarType, BikeType
 } from '../../models/job.model';
 
 @Component({
@@ -29,6 +30,8 @@ export class JobFormComponent implements OnInit {
   // Step 1 - Customer & Vehicle
   customerPhone = '';
   customerName = '';
+  vehicleCategory: VehicleCategory | '' = '';
+  vehicleType: VehicleType | '' = '';
   carBrand = '';
   carModel = '';
   customBrand = '';
@@ -55,19 +58,97 @@ export class JobFormComponent implements OnInit {
   discountValue = 0;
 
   // Data for dropdowns
-  brands = Object.keys(CAR_BRANDS).sort();
+  brands: string[] = [];
   models: string[] = [];
-  colors = CAR_COLORS;
+  colors: string[] = [];
+  vehicleTypeOptions: string[] = [];
   existingCustomer = false;
 
   ngOnInit(): void {
-    // Group services by category
-    const catMap = new Map<ServiceCategory, ServiceItem[]>();
-    for (const svc of DEFAULT_SERVICES) {
-      if (!catMap.has(svc.category)) catMap.set(svc.category, []);
-      catMap.get(svc.category)!.push({ ...svc, selected: false });
+    // Default to car brands/colors until user picks a category
+    this.brands = Object.keys(CAR_BRANDS).sort();
+    this.colors = CAR_COLORS;
+  }
+
+  // ── Vehicle Category / Type helpers ──
+  onVehicleCategoryChange(): void {
+    this.vehicleType = '';
+
+    if (this.vehicleCategory === 'Car') {
+      this.vehicleTypeOptions = [...CAR_TYPES];
+      this.brands = Object.keys(CAR_BRANDS).sort();
+      this.colors = CAR_COLORS;
+    } else if (this.vehicleCategory === 'Bike') {
+      this.vehicleTypeOptions = [...BIKE_TYPES];
+      this.brands = Object.keys(BIKE_BRANDS).sort();
+      this.colors = BIKE_COLORS;
+    } else {
+      this.vehicleTypeOptions = [];
+      this.brands = [];
+      this.colors = [];
     }
-    this.serviceCategories = Array.from(catMap.entries()).map(([name, services]) => ({ name, services }));
+
+    // Reset brand/model since brand list changed
+    this.carBrand = '';
+    this.carModel = '';
+    this.customBrand = '';
+    this.customModel = '';
+    this.models = [];
+    this.buildServiceList();
+  }
+
+  onVehicleTypeChange(): void {
+    this.buildServiceList();
+  }
+
+  private buildServiceList(): void {
+    if (!this.vehicleCategory) {
+      this.serviceCategories = [];
+      return;
+    }
+
+    // Filter catalog by vehicle category
+    const filtered = SERVICE_CATALOG.filter(s => s.forVehicle === this.vehicleCategory);
+
+    // Group by category
+    const catMap = new Map<ServiceCategory, ServiceItem[]>();
+    for (const catalogItem of filtered) {
+      if (!catMap.has(catalogItem.category)) catMap.set(catalogItem.category, []);
+      const price = this.vehicleType ? (catalogItem.prices[this.vehicleType] ?? 0) : 0;
+      catMap.get(catalogItem.category)!.push({
+        id: catalogItem.id,
+        name: catalogItem.name,
+        category: catalogItem.category,
+        price: price,
+        selected: false
+      });
+    }
+
+    // Preserve selections if rebuilding (e.g., when vehicle type changes)
+    const previousSelections = new Map<string, { selected: boolean; price: number }>();
+    for (const cat of this.serviceCategories) {
+      for (const svc of cat.services) {
+        if (svc.selected) {
+          previousSelections.set(svc.id, { selected: true, price: svc.price });
+        }
+      }
+    }
+
+    this.serviceCategories = Array.from(catMap.entries()).map(([name, services]) => {
+      // Restore selections and update prices
+      for (const svc of services) {
+        const prev = previousSelections.get(svc.id);
+        if (prev) {
+          svc.selected = true;
+          // If the catalog price is 0 (custom), keep previously entered price
+          // Otherwise update to the new vehicle type price
+          const catalogItem = SERVICE_CATALOG.find(c => c.id === svc.id);
+          const catalogPrice = catalogItem && this.vehicleType ? (catalogItem.prices[this.vehicleType] ?? 0) : 0;
+          svc.price = catalogPrice > 0 ? catalogPrice : prev.price;
+        }
+      }
+      return { name, services };
+    });
   }
 
   // Step 1 helpers
@@ -137,7 +218,8 @@ export class JobFormComponent implements OnInit {
   }
 
   onBrandChange(): void {
-    const brandModels = CAR_BRANDS[this.carBrand] || [];
+    const brandList = this.vehicleCategory === 'Bike' ? BIKE_BRANDS : CAR_BRANDS;
+    const brandModels = brandList[this.carBrand] || [];
     // Ensure 'Other' is always available as a model option
     this.models = brandModels.includes('Other') ? [...brandModels] : [...brandModels, 'Other'];
     if (!this.models.includes(this.carModel)) {
@@ -154,6 +236,8 @@ export class JobFormComponent implements OnInit {
 
   toggleService(service: ServiceItem): void {
     service.selected = !service.selected;
+    // If selecting and price is 0 from catalog (custom), keep it at 0 for manual entry
+    // If selecting and price is set from catalog, it's already auto-filled
   }
 
   get selectedServices(): ServiceItem[] {
@@ -172,6 +256,13 @@ export class JobFormComponent implements OnInit {
 
   get servicesMissingPrice(): number {
     return this.selectedServices.filter(s => !s.price || s.price <= 0).length;
+  }
+
+  // Check if a service is a "custom price" service (catalog price is 0 for all vehicle types)
+  isCustomPriceService(serviceId: string): boolean {
+    const catalogItem = SERVICE_CATALOG.find(c => c.id === serviceId);
+    if (!catalogItem) return false;
+    return Object.values(catalogItem.prices).every(p => p === 0);
   }
 
   // Step 3 helpers
@@ -214,7 +305,12 @@ export class JobFormComponent implements OnInit {
         const hasReg = !!this.registrationNumber;
         return hasPhone && hasName && hasBrand && hasModel && hasReg;
       }
-      case 2: return this.selectedServices.length > 0 && this.selectedServices.every(s => s.price > 0);
+      case 2: {
+        const hasVehicleCategory = !!this.vehicleCategory;
+        const hasVehicleType = !!this.vehicleType;
+        const hasServices = this.selectedServices.length > 0 && this.selectedServices.every(s => s.price > 0);
+        return hasVehicleCategory && hasVehicleType && hasServices;
+      }
       case 3: return this.beforePhotos.length > 0 && this.customerAcknowledged;
       case 4: return true;
       default: return false;
@@ -229,6 +325,8 @@ export class JobFormComponent implements OnInit {
       updatedAt: new Date().toISOString(),
       customerName: this.customerName,
       customerPhone: this.customerPhone,
+      vehicleCategory: this.vehicleCategory as VehicleCategory,
+      vehicleType: this.vehicleType as VehicleType,
       carBrand: this.effectiveBrand,
       carModel: this.effectiveModel,
       registrationNumber: this.registrationNumber.toUpperCase(),

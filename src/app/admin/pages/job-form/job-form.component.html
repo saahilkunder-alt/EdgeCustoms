@@ -49,7 +49,7 @@
 
       <div class="form-row">
         <div class="form-group flex-1">
-          <label class="form-label">Car Brand *</label>
+          <label class="form-label">Brand *</label>
           <select class="form-select" [(ngModel)]="carBrand" (ngModelChange)="onBrandChange()">
             <option value="">Select Brand</option>
             @for (brand of brands; track brand) {
@@ -117,6 +117,33 @@
     <div class="form-step">
       <h2 class="step-title">Select Services</h2>
 
+      <!-- Vehicle Category & Type -->
+      <div class="form-row" style="margin-bottom: 16px;">
+        <div class="form-group flex-1">
+          <label class="form-label">Vehicle Category *</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" [class.active]="vehicleCategory === 'Car'"
+              (click)="vehicleCategory = 'Car'; onVehicleCategoryChange()">
+              🚗 Car
+            </button>
+            <button class="toggle-btn" [class.active]="vehicleCategory === 'Bike'"
+              (click)="vehicleCategory = 'Bike'; onVehicleCategoryChange()">
+              🏍️ Bike
+            </button>
+          </div>
+        </div>
+        <div class="form-group flex-1">
+          <label class="form-label">Vehicle Type *</label>
+          <select class="form-select" [(ngModel)]="vehicleType" (ngModelChange)="onVehicleTypeChange()"
+            [disabled]="!vehicleCategory">
+            <option value="">Select Type</option>
+            @for (vt of vehicleTypeOptions; track vt) {
+              <option [value]="vt">{{ vt }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
       <div class="running-total">
         <span>Selected: {{ selectedServices.length }} services</span>
         <span class="total-amount">₹{{ subtotal.toLocaleString() }}</span>
@@ -151,6 +178,8 @@
                         <span class="svc-name">{{ svc.name }}</span>
                         @if (svc.price > 0) {
                           <span class="svc-price">₹{{ svc.price.toLocaleString() }}</span>
+                        } @else if (isCustomPriceService(svc.id)) {
+                          <span class="svc-price custom">Custom</span>
                         }
                       </div>
                     </button>
@@ -225,7 +254,11 @@
       <div class="review-section">
         <h3 class="review-heading">Vehicle</h3>
         <div class="review-row">
-          <span class="review-label">Car</span>
+          <span class="review-label">Category</span>
+          <span class="review-value">{{ vehicleCategory }} — {{ vehicleType }}</span>
+        </div>
+        <div class="review-row">
+          <span class="review-label">{{ vehicleCategory === 'Bike' ? 'Bike' : 'Car' }}</span>
           <span class="review-value">{{ effectiveBrand }} {{ effectiveModel }}</span>
         </div>
         <div class="review-row">
@@ -301,4 +334,5 @@
       </button>
     }
   </div>
+
 </div>

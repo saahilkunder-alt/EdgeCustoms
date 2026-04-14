@@ -494,3 +494,63 @@
   min-width: 180px;
 }
 .nav-btn.submit:hover { background: #c5ff5a; }
+
+/* Vehicle Category Toggle */
+.toggle-group {
+  display: flex;
+  gap: 8px;
+}
+.toggle-btn {
+  flex: 1;
+  padding: 14px 16px;
+  background: #141414;
+  border: 2px solid #222;
+  border-radius: 12px;
+  color: #888;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.toggle-btn:hover {
+  border-color: #333;
+  color: #ccc;
+}
+.toggle-btn.active {
+  border-color: #ADFF2F;
+  background: rgba(173, 255, 47, 0.06);
+  color: #ADFF2F;
+  box-shadow: 0 0 12px rgba(173, 255, 47, 0.1);
+}
+
+/* Vehicle Type Badge */
+.vehicle-type-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(173, 255, 47, 0.06);
+  border: 1px solid rgba(173, 255, 47, 0.15);
+  border-radius: 10px;
+  margin-bottom: 12px;
+  font-family: 'Outfit', sans-serif;
+}
+.vtb-icon {
+  font-size: 18px;
+}
+.vtb-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #ADFF2F;
+  letter-spacing: 0.3px;
+}
+
+/* Custom Price Label */
+.svc-price.custom {
+  color: #f59e0b;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 12px;
+}

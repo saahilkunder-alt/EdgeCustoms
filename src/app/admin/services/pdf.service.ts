@@ -85,6 +85,9 @@ export class PdfService {
 
     // ── Vehicle Details ──
     sectionHeader('VEHICLE DETAILS');
+    if (job.vehicleCategory && job.vehicleType) {
+      addRow('Vehicle Type', `${job.vehicleCategory} — ${job.vehicleType}`);
+    }
     addRow('Brand / Model', `${job.carBrand} ${job.carModel}`);
     addRow('Reg. Number', job.registrationNumber);
     addRow('Color', job.carColor);
@@ -174,6 +177,8 @@ export class PdfService {
 
   generateWhatsAppMessage(job: JobCard): string {
     const services = job.selectedServices?.map(s => `• ${s.name}`).join('\n') || 'None';
+    const vehicleLabel = (job.vehicleCategory === 'Bike') ? '🏍️' : '🚘';
+    const vehicleTypeStr = (job.vehicleCategory && job.vehicleType) ? ` (${job.vehicleType})` : '';
     return encodeURIComponent(
       `🚗 *EDGE CUSTOMS - Job Card*\n` +
       `━━━━━━━━━━━━━━━━━━\n` +
@@ -181,7 +186,7 @@ export class PdfService {
       `📅 *Date:* ${new Date(job.createdAt).toLocaleDateString('en-IN')}\n\n` +
       `👤 *Customer:* ${job.customerName}\n` +
       `📞 *Phone:* ${job.customerPhone}\n\n` +
-      `🚘 *Vehicle:* ${job.carBrand} ${job.carModel}\n` +
+      `${vehicleLabel} *Vehicle:* ${job.carBrand} ${job.carModel}${vehicleTypeStr}\n` +
       `🔢 *Reg:* ${job.registrationNumber}\n\n` +
       `🔧 *Services:*\n${services}\n\n` +
       `💰 *Total:* ₹${(job.finalAmount || 0).toLocaleString()}\n` +

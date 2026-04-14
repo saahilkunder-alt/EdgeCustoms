@@ -12,6 +12,16 @@ export type PaymentMode = 'Cash' | 'UPI' | 'Card' | 'Net Banking' | 'Other';
 // ── User Roles ──
 export type UserRole = 'admin' | 'staff';
 
+// ── Vehicle Category & Type ──
+export type VehicleCategory = 'Car' | 'Bike';
+
+export type CarType = 'Hatchback' | 'Sedan / Crossover' | 'SUV / MPV' | 'Luxury';
+export type BikeType = 'Below 350 CC' | 'Above 350 CC' | 'ADV/Sports above 900cc';
+export type VehicleType = CarType | BikeType;
+
+export const CAR_TYPES: CarType[] = ['Hatchback', 'Sedan / Crossover', 'SUV / MPV', 'Luxury'];
+export const BIKE_TYPES: BikeType[] = ['Below 350 CC', 'Above 350 CC', 'ADV/Sports above 900cc'];
+
 // ── Service Category ──
 export interface ServiceItem {
   id: string;
@@ -22,14 +32,77 @@ export interface ServiceItem {
 }
 
 export type ServiceCategory =
-  | 'Paint Protection Film (PPF)'
-  | 'Ceramic Coating'
-  | 'Graphene Coating'
-  | 'Car Wrapping'
-  | 'Full Car Detailing'
-  | 'Sun Films'
-  | 'Coding & Scanning'
-  | 'Add-ons';
+  | 'Cars Wash'
+  | 'Car Detailing'
+  | 'Add-On'
+  | 'Bike Wash'
+  | 'Bike Add-On';
+
+// ── Service Catalog with pricing per vehicle type ──
+export interface ServiceCatalogItem {
+  id: string;
+  name: string;
+  category: ServiceCategory;
+  forVehicle: VehicleCategory;
+  prices: { [vehicleType: string]: number }; // 0 = custom (admin enters manually)
+}
+
+export const SERVICE_CATALOG: ServiceCatalogItem[] = [
+
+  // ─── Cars Wash ───
+  { id: 'cw-foam', name: 'Foam Wash', category: 'Cars Wash', forVehicle: 'Car',
+    prices: { 'Hatchback': 750, 'Sedan / Crossover': 850, 'SUV / MPV': 1000, 'Luxury': 1150 } },
+  { id: 'cw-detailed', name: 'Detailed Wash', category: 'Cars Wash', forVehicle: 'Car',
+    prices: { 'Hatchback': 900, 'Sedan / Crossover': 1000, 'SUV / MPV': 1100, 'Luxury': 1200 } },
+  { id: 'cw-premium', name: 'Premium Wash', category: 'Cars Wash', forVehicle: 'Car',
+    prices: { 'Hatchback': 1900, 'Sedan / Crossover': 2000, 'SUV / MPV': 2300, 'Luxury': 2500 } },
+
+  // ─── Car Detailing ───
+  { id: 'cd-interior', name: 'Interior Detailing', category: 'Car Detailing', forVehicle: 'Car',
+    prices: { 'Hatchback': 3500, 'Sedan / Crossover': 4000, 'SUV / MPV': 4500, 'Luxury': 5000 } },
+  { id: 'cd-exterior', name: 'Exterior Detailing', category: 'Car Detailing', forVehicle: 'Car',
+    prices: { 'Hatchback': 4500, 'Sedan / Crossover': 5000, 'SUV / MPV': 5500, 'Luxury': 6000 } },
+  { id: 'cd-combo', name: 'Interior & Exterior Detailing (Combo)', category: 'Car Detailing', forVehicle: 'Car',
+    prices: { 'Hatchback': 7000, 'Sedan / Crossover': 8000, 'SUV / MPV': 9000, 'Luxury': 10000 } },
+
+  // ─── Add-On (Car) ───
+  { id: 'cs-ppf', name: 'Paint Protection Film (PPF)', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0, 'Luxury': 0 } },
+  { id: 'cs-wraps', name: 'Car Wraps', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0, 'Luxury': 0 } },
+  { id: 'cs-ceramic', name: 'Ceramic Coating Package', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0, 'Luxury': 0 } },
+  { id: 'cs-scanning', name: 'Scanning & Coding / Feature Unlock', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0, 'Luxury': 0 } },
+  { id: 'cs-glass-windshield', name: 'Glass Polish (Windshield)', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 2000, 'Sedan / Crossover': 2000, 'SUV / MPV': 2500, 'Luxury': 2500 } },
+  { id: 'cs-glass-all', name: 'Glass Polish (All Glasses)', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 2800, 'Sedan / Crossover': 2800, 'SUV / MPV': 3400, 'Luxury': 3400 } },
+  { id: 'cs-alloy', name: 'Alloy Wheel Detailing', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 2500, 'Sedan / Crossover': 2500, 'SUV / MPV': 3000, 'Luxury': 3500 } },
+  { id: 'cs-engine', name: 'Engine Bay Detailing', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 1800, 'Sedan / Crossover': 1800, 'SUV / MPV': 2500, 'Luxury': 2500 } },
+  { id: 'cs-headlight', name: 'Head Light Restoration', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 1500, 'Sedan / Crossover': 1500, 'SUV / MPV': 1500, 'Luxury': 1700 } },
+
+  // ─── Bike Wash ───
+  { id: 'bw-foam', name: 'Foam Wash', category: 'Bike Wash', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 350, 'Above 350 CC': 450, 'ADV/Sports above 900cc': 650 } },
+  { id: 'bw-detailed', name: 'Detailed Wash', category: 'Bike Wash', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 500, 'Above 350 CC': 600, 'ADV/Sports above 900cc': 800 } },
+
+  // ─── Bike Add-On ───
+  { id: 'bw-chain', name: 'Chain Cleaning & Lubing', category: 'Bike Add-On', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 300, 'Above 350 CC': 300, 'ADV/Sports above 900cc': 450 } },
+  { id: 'bw-chrome', name: 'Chrome Buffing', category: 'Bike Add-On', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 4500, 'Above 350 CC': 4500, 'ADV/Sports above 900cc': 4500 } },
+  { id: 'bw-detailing', name: 'Bike Detailing', category: 'Bike Add-On', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 3200, 'Above 350 CC': 3700, 'ADV/Sports above 900cc': 4200 } },
+  { id: 'bw-ceramic', name: 'Bike Ceramic Coating', category: 'Bike Add-On', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 0, 'Above 350 CC': 0, 'ADV/Sports above 900cc': 0 } },
+  { id: 'bw-ppf', name: 'Bike Paint Protection Film (PPF)', category: 'Bike Add-On', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 0, 'Above 350 CC': 0, 'ADV/Sports above 900cc': 0 } },
+];
 
 // ── Edit Log ──
 export interface EditLog {
@@ -59,6 +132,8 @@ export interface JobCard {
   customerPhone: string;
 
   // Vehicle
+  vehicleCategory: VehicleCategory;
+  vehicleType: VehicleType;
   carBrand: string;
   carModel: string;
   registrationNumber: string;
@@ -115,59 +190,6 @@ export interface VehicleInfo {
   color: string;
 }
 
-// ── Default Services Catalog (matches website service pages) ──
-export const DEFAULT_SERVICES: ServiceItem[] = [
-
-  // ─── Paint Protection Film (PPF) ───
-  { id: 'ppf-color', name: 'Color PPF', category: 'Paint Protection Film (PPF)', price: 0 },
-  { id: 'ppf-matte', name: 'Matte PPF', category: 'Paint Protection Film (PPF)', price: 0 },
-
-  // ─── Ceramic Coating ───
-  { id: 'cer-paint', name: 'Paint / Exterior Coating', category: 'Ceramic Coating', price: 0 },
-  { id: 'cer-glass', name: 'Glass Coating', category: 'Ceramic Coating', price: 0 },
-  { id: 'cer-wheel', name: 'Wheel & Alloy Coating', category: 'Ceramic Coating', price: 0 },
-  { id: 'cer-caliper', name: 'Brake Caliper Coating', category: 'Ceramic Coating', price: 0 },
-  { id: 'cer-trim', name: 'Plastic & Trim Coating', category: 'Ceramic Coating', price: 0 },
-  { id: 'cer-lights', name: 'Headlight & Taillight Coating', category: 'Ceramic Coating', price: 0 },
-  { id: 'cer-interior', name: 'Interior Coating', category: 'Ceramic Coating', price: 0 },
-
-  // ─── Graphene Coating ───
-  { id: 'gra-exterior', name: 'Full Exterior Coating', category: 'Graphene Coating', price: 0 },
-  { id: 'gra-glass', name: 'Glass & Windshield Coating', category: 'Graphene Coating', price: 0 },
-  { id: 'gra-wheel', name: 'Wheel & Alloy Coating', category: 'Graphene Coating', price: 0 },
-  { id: 'gra-caliper', name: 'Brake Caliper Coating', category: 'Graphene Coating', price: 0 },
-  { id: 'gra-trim', name: 'Plastic Trim & Cladding Coating', category: 'Graphene Coating', price: 0 },
-  { id: 'gra-lights', name: 'Headlight & Taillight Protection', category: 'Graphene Coating', price: 0 },
-  { id: 'gra-interior', name: 'Interior Coating', category: 'Graphene Coating', price: 0 },
-
-  // ─── Car Wrapping ───
-  { id: 'wrap-gloss', name: 'Gloss Finish', category: 'Car Wrapping', price: 0 },
-  { id: 'wrap-matte', name: 'Matte & Satin', category: 'Car Wrapping', price: 0 },
-  { id: 'wrap-custom', name: 'Custom Design', category: 'Car Wrapping', price: 0 },
-
-  // ─── Full Car Detailing ───
-  { id: 'det-interior', name: 'Interior Detailing', category: 'Full Car Detailing', price: 0 },
-  { id: 'det-engine', name: 'Engine Bay Detailing', category: 'Full Car Detailing', price: 0 },
-  { id: 'det-headlight', name: 'Headlight Restoration', category: 'Full Car Detailing', price: 0 },
-  { id: 'det-alloy', name: 'Alloy Wheel Cleaning', category: 'Full Car Detailing', price: 0 },
-  { id: 'det-underbody', name: 'Underbody Cleaning', category: 'Full Car Detailing', price: 0 },
-
-  // ─── Sun Films ───
-  { id: 'sf-uv', name: 'UV Protection Film', category: 'Sun Films', price: 0 },
-  { id: 'sf-heat', name: 'Heat Rejection Film', category: 'Sun Films', price: 0 },
-  { id: 'sf-privacy', name: 'Privacy & Security Film', category: 'Sun Films', price: 0 },
-
-  // ─── Coding & Scanning ───
-  { id: 'code-diag', name: 'Diagnostic Scanning', category: 'Coding & Scanning', price: 0 },
-  { id: 'code-error', name: 'Error Code Service', category: 'Coding & Scanning', price: 0 },
-  { id: 'code-feature', name: 'Vehicle Coding / Feature Activation', category: 'Coding & Scanning', price: 0 },
-  { id: 'code-module', name: 'Module Programming & Adaptations', category: 'Coding & Scanning', price: 0 },
-
-  // ─── Add-ons ───
-  { id: 'add-freshener', name: 'Air Freshener Treatment', category: 'Add-ons', price: 0 },
-  { id: 'add-tar', name: 'Tar & Iron Removal', category: 'Add-ons', price: 0 },
-];
-
 // ── Popular Car Brands & Models (India) ──
 export const CAR_BRANDS: { [brand: string]: string[] } = {
   'Maruti Suzuki': ['Swift', 'Baleno', 'Dzire', 'Vitara Brezza', 'Ertiga', 'XL6', 'Ciaz', 'S-Cross', 'Alto', 'WagonR', 'Celerio', 'Ignis', 'Jimny', 'Fronx', 'Invicto', 'Grand Vitara'],
@@ -194,8 +216,31 @@ export const CAR_BRANDS: { [brand: string]: string[] } = {
   'Other': ['Custom']
 };
 
+// ── Popular Bike Brands & Models (India) ──
+export const BIKE_BRANDS: { [brand: string]: string[] } = {
+  'Royal Enfield': ['Classic 350', 'Meteor 350', 'Hunter 350', 'Bullet 350', 'Continental GT 650', 'Interceptor 650', 'Super Meteor 650', 'Himalayan', 'Shotgun 650', 'Guerrilla 450'],
+  'KTM': ['Duke 200', 'Duke 250', 'Duke 390', 'RC 200', 'RC 390', 'Adventure 250', 'Adventure 390'],
+  'Bajaj': ['Pulsar NS200', 'Pulsar RS200', 'Pulsar N250', 'Dominar 400', 'Dominar 250'],
+  'Yamaha': ['R15 V4', 'MT-15', 'FZ-S', 'FZ-X', 'Aerox 155'],
+  'Honda': ['CB350', 'Highness', 'Hornet 2.0', 'SP 125', 'Activa 6G', 'X-ADV'],
+  'Suzuki': ['Gixxer SF 250', 'Gixxer 250', 'V-Strom SX', 'Hayabusa', 'Access 125'],
+  'Kawasaki': ['Ninja 300', 'Ninja 400', 'Ninja 650', 'Z650', 'Z900', 'Versys 650', 'ZX-10R', 'Vulcan S'],
+  'BMW Motorrad': ['G 310 R', 'G 310 GS', 'F 850 GS', 'R 1250 GS', 'S 1000 RR', 'M 1000 RR'],
+  'Ducati': ['Scrambler', 'Monster', 'Panigale V2', 'Panigale V4', 'Multistrada V4', 'Diavel V4'],
+  'Harley-Davidson': ['X440', 'Iron 883', 'Fat Boy', 'Road Glide', 'Street Glide', 'Pan America'],
+  'Triumph': ['Speed 400', 'Scrambler 400X', 'Trident 660', 'Street Triple', 'Tiger 900', 'Speed Triple', 'Rocket 3'],
+  'Aprilia': ['RS 457', 'Tuono 457', 'SXR 160', 'SR 160'],
+  'Husqvarna': ['Svartpilen 250', 'Vitpilen 250', 'Svartpilen 401'],
+  'Other': ['Custom']
+};
+
 export const CAR_COLORS: string[] = [
   'White', 'Black', 'Silver', 'Grey', 'Red', 'Blue', 'Green',
   'Brown', 'Beige', 'Gold', 'Orange', 'Yellow', 'Maroon',
   'Navy Blue', 'Pearl White', 'Metallic Grey', 'Matte Black', 'Other'
+];
+
+export const BIKE_COLORS: string[] = [
+  'Black', 'Red', 'White', 'Blue', 'Silver', 'Grey', 'Green',
+  'Yellow', 'Orange', 'Matte Black', 'Chrome', 'Other'
 ];
