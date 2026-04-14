@@ -21,7 +21,7 @@ export class LoginComponent {
   constructor(
     private auth: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   selectRole(role: UserRole): void {
     this.selectedRole = role;
@@ -31,10 +31,10 @@ export class LoginComponent {
 
   async login(): Promise<void> {
     if (!this.selectedRole || !this.pin) {
-      this.error = 'Please enter your 4-digit PIN.';
+      this.error = 'Please enter your password.';
       return;
     }
-    
+
     this.isLoading = true;
     this.error = '';
 
@@ -44,7 +44,7 @@ export class LoginComponent {
       if (success) {
         this.router.navigate(['/edge-staff']);
       } else {
-        this.error = 'Invalid PIN. Please check your 4-digit code.';
+        this.error = 'Invalid password. Please try again.';
         this.pin = '';
       }
     } catch (e) {

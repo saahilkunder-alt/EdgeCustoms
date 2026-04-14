@@ -22,32 +22,21 @@
     <!-- Secret Key Input -->
     <div class="login-form">
       <div class="input-group" [class.error]="error">
-        <input 
-          type="password" 
-          [(ngModel)]="pin" 
-          placeholder="Enter 4-digit PIN" 
-          class="key-input"
-          [disabled]="isLoading"
-          (keyup.enter)="login()"
-          inputmode="numeric"
-          pattern="[0-9]*"
-          maxlength="4">
+        <input type="password" [(ngModel)]="pin" placeholder="Enter password" class="key-input"
+          [disabled]="isLoading" (keyup.enter)="login()">
         <span class="input-icon">🔒</span>
       </div>
-      
+
       @if (error) {
-        <p class="login-error">{{ error }}</p>
+      <p class="login-error">{{ error }}</p>
       }
 
-      <button 
-        class="login-btn" 
-        [class.loading]="isLoading" 
-        [disabled]="isLoading || pin.length !== 4"
+      <button class="login-btn" [class.loading]="isLoading" [disabled]="isLoading || !pin"
         (click)="login()">
         @if (isLoading) {
-          <span class="spinner"></span>
+        <span class="spinner"></span>
         } @else {
-          Login to Portal
+        Login to Portal
         }
       </button>
     </div>

@@ -8,11 +8,10 @@ interface AuthState {
 }
 
 // Simple PIN-based auth (no backend)
-// SHA1 hashes of the 4-digit PINs
-// Password: 1234 -> 7110eda4d09e062aa5e4a390b0a572ac0d2c0220
+// SHA1 hashes of the access keys
 const CREDENTIALS: { [key in UserRole]: string } = {
-  admin: '7110eda4d09e062aa5e4a390b0a572ac0d2c0220',
-  staff: '7110eda4d09e062aa5e4a390b0a572ac0d2c0220'
+  admin: '53f962616be53ff377cba5cd98791383d76f6294',
+  staff: 'a0617f24654bb61a04fdaf23e7c1183db710253e'
 };
 
 const SESSION_KEY = 'ec_auth_session';
@@ -66,7 +65,7 @@ export class AuthService {
         const state = JSON.parse(raw) as AuthState;
         if (state.isAuthenticated && state.role) return state;
       }
-    } catch {}
+    } catch { }
     return { isAuthenticated: false, role: null };
   }
 }
