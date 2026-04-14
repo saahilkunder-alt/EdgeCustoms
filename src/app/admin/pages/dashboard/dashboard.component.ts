@@ -4,6 +4,7 @@ import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
 import { StatusBadgeComponent } from '../../components/status-badge/status-badge.component';
 import { JobCard } from '../../models/job.model';
+import { ApiService, DashboardData } from '../../services/api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,17 +16,33 @@ import { JobCard } from '../../models/job.model';
 export class DashboardComponent implements OnInit {
   private storage = inject(StorageService);
   private auth = inject(AuthService);
+  private api = inject(ApiService);
 
   stats = { total: 0, inProgress: 0, completed: 0, revenue: 0 };
   recentJobs: JobCard[] = [];
   totalCustomers = 0;
   isAdmin = false;
+  isLoading = true;
 
   ngOnInit(): void {
-    this.stats = this.storage.getTodayStats();
-    this.recentJobs = this.storage.getAllJobs().slice(0, 5);
-    this.totalCustomers = this.storage.getAllCustomers().length;
     this.isAdmin = this.auth.isAdmin;
+    this.loadDashboardData();
+  }
+
+  loadDashboardData(): void {
+    this.isLoading = true;
+    this.api.getDashboardData().subscribe({
+      next: (data: DashboardData) => {
+        this.stats = data.stats;
+        this.recentJobs = data.recentJobs;
+        this.totalCustomers = data.totalCustomers;
+        this.isLoading = false;
+      },
+      error: (err: any) => {
+        console.error('Error loading dashboard:', err);
+        this.isLoading = false;
+      }
+    });
   }
 
   exportData(): void {

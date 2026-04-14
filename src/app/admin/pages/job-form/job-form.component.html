@@ -47,6 +47,33 @@
         <input type="text" class="form-input" [(ngModel)]="customerName" placeholder="Full name">
       </div>
 
+      <!-- Vehicle Category & Type (Moved here) -->
+      <div class="form-row" style="margin-bottom: 16px;">
+        <div class="form-group flex-1">
+          <label class="form-label">Vehicle Category *</label>
+          <div class="toggle-group">
+            <button class="toggle-btn" [class.active]="vehicleCategory === 'Car'"
+              (click)="vehicleCategory = 'Car'; onVehicleCategoryChange()">
+              🚗 Car
+            </button>
+            <button class="toggle-btn" [class.active]="vehicleCategory === 'Bike'"
+              (click)="vehicleCategory = 'Bike'; onVehicleCategoryChange()">
+              🏍️ Bike
+            </button>
+          </div>
+        </div>
+        <div class="form-group flex-1">
+          <label class="form-label">Vehicle Type *</label>
+          <select class="form-select" [(ngModel)]="vehicleType" (ngModelChange)="onVehicleTypeChange()"
+            [disabled]="!vehicleCategory">
+            <option value="">Select Type</option>
+            @for (vt of vehicleTypeOptions; track vt) {
+              <option [value]="vt">{{ vt }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
       <div class="form-row">
         <div class="form-group flex-1">
           <label class="form-label">Brand *</label>
@@ -116,33 +143,6 @@
   @if (currentStep === 2) {
     <div class="form-step">
       <h2 class="step-title">Select Services</h2>
-
-      <!-- Vehicle Category & Type -->
-      <div class="form-row" style="margin-bottom: 16px;">
-        <div class="form-group flex-1">
-          <label class="form-label">Vehicle Category *</label>
-          <div class="toggle-group">
-            <button class="toggle-btn" [class.active]="vehicleCategory === 'Car'"
-              (click)="vehicleCategory = 'Car'; onVehicleCategoryChange()">
-              🚗 Car
-            </button>
-            <button class="toggle-btn" [class.active]="vehicleCategory === 'Bike'"
-              (click)="vehicleCategory = 'Bike'; onVehicleCategoryChange()">
-              🏍️ Bike
-            </button>
-          </div>
-        </div>
-        <div class="form-group flex-1">
-          <label class="form-label">Vehicle Type *</label>
-          <select class="form-select" [(ngModel)]="vehicleType" (ngModelChange)="onVehicleTypeChange()"
-            [disabled]="!vehicleCategory">
-            <option value="">Select Type</option>
-            @for (vt of vehicleTypeOptions; track vt) {
-              <option [value]="vt">{{ vt }}</option>
-            }
-          </select>
-        </div>
-      </div>
 
       <div class="running-total">
         <span>Selected: {{ selectedServices.length }} services</span>

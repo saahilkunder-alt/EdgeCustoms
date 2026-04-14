@@ -24,7 +24,7 @@
             <span class="cust-name">{{ cust.name }}</span>
             <span class="cust-phone">{{ cust.phone }}</span>
             <div class="cust-meta">
-              <span>{{ cust.jobIds.length }} job{{ cust.jobIds.length !== 1 ? 's' : '' }}</span>
+              <span>{{ cust.jobCount || 0 }} job{{ cust.jobCount !== 1 ? 's' : '' }}</span>
               <span>·</span>
               <span>Last: {{ formatDate(cust.lastVisit) }}</span>
             </div>

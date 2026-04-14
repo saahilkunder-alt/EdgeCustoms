@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
+import { ApiService } from '../../services/api.service';
 import { FuelGaugeComponent } from '../../components/fuel-gauge/fuel-gauge.component';
 import { PhotoUploadComponent } from '../../components/photo-upload/photo-upload.component';
 
@@ -22,10 +23,12 @@ import {
 export class JobFormComponent implements OnInit {
   private storage = inject(StorageService);
   private auth = inject(AuthService);
+  private api = inject(ApiService);
   private router = inject(Router);
 
   currentStep = 1;
   totalSteps = 4;
+  isLoading = false;
 
   // Step 1 - Customer & Vehicle
   customerPhone = '';
@@ -72,6 +75,11 @@ export class JobFormComponent implements OnInit {
 
   // ── Vehicle Category / Type helpers ──
   onVehicleCategoryChange(): void {
+    const oldBrand = this.carBrand;
+    const oldModel = this.carModel;
+    const oldCustomBrand = this.customBrand;
+    const oldCustomModel = this.customModel;
+
     this.vehicleType = '';
 
     if (this.vehicleCategory === 'Car') {
@@ -88,12 +96,34 @@ export class JobFormComponent implements OnInit {
       this.colors = [];
     }
 
-    // Reset brand/model since brand list changed
-    this.carBrand = '';
-    this.carModel = '';
-    this.customBrand = '';
-    this.customModel = '';
-    this.models = [];
+    // Check if the old brand is valid in the new category
+    if (oldBrand && this.brands.includes(oldBrand)) {
+      this.carBrand = oldBrand;
+      this.onBrandChange(false); // Populates this.models
+      // Check if the old model is valid for this brand in the new category
+      if (oldModel && this.models.includes(oldModel)) {
+        this.carModel = oldModel;
+      } else {
+        this.carModel = '';
+      }
+      this.customBrand = oldCustomBrand;
+      this.customModel = oldCustomModel;
+    } else {
+      // Reset if incompatible or if it was "Other" (since "Other" models vary)
+      if (oldBrand === 'Other') {
+        this.carBrand = 'Other';
+        this.onBrandChange(false);
+        this.customBrand = oldCustomBrand;
+        this.customModel = oldCustomModel;
+      } else {
+        this.carBrand = '';
+        this.carModel = '';
+        this.customBrand = '';
+        this.customModel = '';
+        this.models = [];
+      }
+    }
+
     this.buildServiceList();
   }
 
@@ -159,19 +189,54 @@ export class JobFormComponent implements OnInit {
     this.existingCustomer = false;
 
     if (this.customerPhone.length === 10) {
-      const customer = this.storage.getCustomerByPhone(this.customerPhone);
-      if (customer) {
-        this.customerName = customer.name;
-        this.existingCustomer = true;
-        if (customer.vehicles.length > 0) {
-          const lastVehicle = customer.vehicles[customer.vehicles.length - 1];
-          this.carBrand = lastVehicle.brand;
-          this.onBrandChange();
-          this.carModel = lastVehicle.model;
-          this.registrationNumber = lastVehicle.registrationNumber;
-          this.carColor = lastVehicle.color;
-        }
-      }
+      this.api.lookupCustomer(this.customerPhone).subscribe({
+        next: (res: { exists: boolean, customer?: any }) => {
+          if (res.exists && res.customer) {
+            this.customerName = res.customer.name;
+            this.existingCustomer = true;
+            if (res.customer.lastVehicle) {
+              const v = res.customer.lastVehicle;
+
+              // CRITICAL: Set category first so Brand/Model lists are initialized correctly
+              if (v.vehicle_category) {
+                this.vehicleCategory = v.vehicle_category;
+                this.onVehicleCategoryChange();
+              }
+
+              if (v.vehicle_type) {
+                this.vehicleType = v.vehicle_type;
+                this.onVehicleTypeChange();
+              }
+
+              // Handle Brand auto-fill
+              if (v.brand === 'Other') {
+                this.carBrand = 'Other';
+                this.customBrand = v.custom_brand || ''; // Use custom field if available
+              } else {
+                this.carBrand = v.brand;
+              }
+
+              this.onBrandChange(false); // Don't reset custom fields yet
+
+              // Handle Model auto-fill
+              if (v.model === 'Other' || v.model === 'Custom') {
+                this.carModel = v.model;
+                this.customModel = v.custom_model || '';
+              } else {
+                this.carModel = v.model;
+                // If it's a standard model, but we had a custom model typed before, 
+                // we should probably clear it? Actually, onBrandChange(false) handles it.
+              }
+
+              this.registrationNumber = v.registration_number;
+              this.carColor = v.color;
+              this.odometerReading = v.odometer_reading;
+              this.fuelLevel = v.fuel_level || 50;
+            }
+          }
+        },
+        error: (err: any) => console.error('Lookup failed', err)
+      });
     } else if (this.customerPhone.length > 0 && this.customerPhone.length < 10) {
       this.phoneError = `${10 - this.customerPhone.length} more digits needed`;
     }
@@ -194,11 +259,21 @@ export class JobFormComponent implements OnInit {
   }
 
   get effectiveBrand(): string {
-    return this.isOtherBrand ? this.customBrand : this.carBrand;
+    // Priority: customBrand if isOtherBrand, otherwise carBrand. 
+    // Fallback to any non-empty value if the primary one is missing.
+    if (this.isOtherBrand && this.customBrand) return this.customBrand;
+    if (this.carBrand && this.carBrand !== 'Other') return this.carBrand;
+    return this.customBrand || this.carBrand || '';
   }
 
   get effectiveModel(): string {
-    return (this.carModel === 'Other' || this.carModel === 'Custom' || this.isOtherBrand) ? this.customModel : this.carModel;
+    // Priority: customModel if brand is Other/Custom, otherwise carModel.
+    // Fallback to any non-empty value.
+    if (this.isOtherBrand || this.carModel === 'Other' || this.carModel === 'Custom') {
+      if (this.customModel) return this.customModel;
+    }
+    if (this.carModel && this.carModel !== 'Other' && this.carModel !== 'Custom') return this.carModel;
+    return this.customModel || this.carModel || '';
   }
 
   get effectiveColor(): string {
@@ -217,16 +292,21 @@ export class JobFormComponent implements OnInit {
     }
   }
 
-  onBrandChange(): void {
+  onBrandChange(resetCustom = true): void {
     const brandList = this.vehicleCategory === 'Bike' ? BIKE_BRANDS : CAR_BRANDS;
     const brandModels = brandList[this.carBrand] || [];
     // Ensure 'Other' is always available as a model option
     this.models = brandModels.includes('Other') ? [...brandModels] : [...brandModels, 'Other'];
+
+    // Only reset model if the current one isn't valid for the new brand
     if (!this.models.includes(this.carModel)) {
       this.carModel = '';
     }
-    this.customBrand = '';
-    this.customModel = '';
+
+    if (resetCustom) {
+      this.customBrand = '';
+      this.customModel = '';
+    }
   }
 
   // Step 2 helpers
@@ -303,7 +383,9 @@ export class JobFormComponent implements OnInit {
         const hasBrand = this.isOtherBrand ? !!this.customBrand : !!this.carBrand;
         const hasModel = (this.carModel === 'Custom' || this.isOtherBrand) ? !!this.customModel : !!this.carModel;
         const hasReg = !!this.registrationNumber;
-        return hasPhone && hasName && hasBrand && hasModel && hasReg;
+        const hasCategory = !!this.vehicleCategory;
+        const hasType = !!this.vehicleType;
+        return hasPhone && hasName && hasBrand && hasModel && hasReg && hasCategory && hasType;
       }
       case 2: {
         const hasVehicleCategory = !!this.vehicleCategory;
@@ -319,38 +401,44 @@ export class JobFormComponent implements OnInit {
 
   // Submit
   submitJob(): void {
-    const job: JobCard = {
-      id: this.storage.generateJobId(),
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+    const jobData = {
+      job_id: this.storage.generateJobId(),
       customerName: this.customerName,
       customerPhone: this.customerPhone,
-      vehicleCategory: this.vehicleCategory as VehicleCategory,
-      vehicleType: this.vehicleType as VehicleType,
+      vehicleCategory: this.vehicleCategory,
+      vehicleType: this.vehicleType,
       carBrand: this.effectiveBrand,
       carModel: this.effectiveModel,
+      customBrand: this.customBrand,
+      customModel: this.customModel,
       registrationNumber: this.registrationNumber.toUpperCase(),
       carColor: this.effectiveColor,
       odometerReading: this.odometerReading,
       fuelLevel: this.fuelLevel,
       selectedServices: this.selectedServices,
       beforePhotos: this.beforePhotos,
-      afterPhotos: [],
       remarks: this.remarks,
       customerAcknowledged: this.customerAcknowledged,
-      signatureDataUrl: '',
-      status: JobStatus.Received,
       subtotal: this.subtotal,
       discountType: this.discountType,
       discountValue: this.discountValue,
       discountAmount: this.discountAmount,
-      finalAmount: this.finalAmount,
-      payment: null,
-      editHistory: [],
-      isDeleted: false
+      finalAmount: this.finalAmount
     };
 
-    this.storage.createJob(job);
-    this.router.navigate(['/edge-staff/jobs', job.id]);
+    this.isLoading = true;
+    this.api.createJob(jobData).subscribe({
+      next: (res: { success: boolean, id: string }) => {
+        this.isLoading = false;
+        if (res.success) {
+          this.router.navigate(['/edge-staff/jobs', res.id]);
+        }
+      },
+      error: (err: any) => {
+        this.isLoading = false;
+        console.error('Submit failed', err);
+        alert('Failed to save job card. Please check your connection.');
+      }
+    });
   }
 }

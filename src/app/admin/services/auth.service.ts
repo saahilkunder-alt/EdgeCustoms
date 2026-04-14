@@ -7,12 +7,7 @@ interface AuthState {
   role: UserRole | null;
 }
 
-// Simple PIN-based auth (no backend)
-// SHA1 hashes of the access keys
-const CREDENTIALS: { [key in UserRole]: string } = {
-  admin: '53f962616be53ff377cba5cd98791383d76f6294',
-  staff: 'a0617f24654bb61a04fdaf23e7c1183db710253e'
-};
+// Cloudflare D1 Backend authentication
 
 const SESSION_KEY = 'ec_auth_session';
 
@@ -36,21 +31,26 @@ export class AuthService {
   }
 
   async login(role: UserRole, pin: string): Promise<boolean> {
-    const hashed = await this.hashInput(pin);
-    if (CREDENTIALS[role] === hashed) {
-      const state: AuthState = { isAuthenticated: true, role };
-      sessionStorage.setItem(SESSION_KEY, JSON.stringify(state));
-      this.authState.next(state);
-      return true;
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role, pin })
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok && result.success) {
+        const state: AuthState = { isAuthenticated: true, role };
+        sessionStorage.setItem(SESSION_KEY, JSON.stringify(state));
+        this.authState.next(state);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.error('Login error against D1:', e);
+      throw e;
     }
-    return false;
-  }
-
-  private async hashInput(input: string): Promise<string> {
-    const msgUint8 = new TextEncoder().encode(input);
-    const hashBuffer = await crypto.subtle.digest('SHA-1', msgUint8);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
   logout(): void {

@@ -34,3 +34,11 @@ public/assets/mechanic-work.mp4
 # OS files
 .DS_Store
 */.DS_Store
+
+# Auth credentials (git-ignored)
+src/assets/auth-config.json
+public/assets/auth-config.json
+
+# Cloudflare
+wrangler.toml
+.wrangler/

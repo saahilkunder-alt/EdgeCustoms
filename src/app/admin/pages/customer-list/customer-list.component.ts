@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../../services/storage.service';
+import { ApiService } from '../../services/api.service';
 import { Customer } from '../../models/job.model';
 
 @Component({
@@ -13,18 +14,34 @@ import { Customer } from '../../models/job.model';
 })
 export class CustomerListComponent implements OnInit {
   private storage = inject(StorageService);
+  private api = inject(ApiService);
 
   allCustomers: Customer[] = [];
   filteredCustomers: Customer[] = [];
   searchQuery = '';
+  isLoading = false;
 
   ngOnInit(): void {
-    this.allCustomers = this.storage.getAllCustomers();
-    this.filteredCustomers = this.allCustomers;
+    this.fetchCustomers();
+  }
+
+  fetchCustomers(): void {
+    this.isLoading = true;
+    this.api.getCustomers(this.searchQuery).subscribe({
+      next: (customers: Customer[]) => {
+        this.allCustomers = customers;
+        this.filteredCustomers = customers;
+        this.isLoading = false;
+      },
+      error: (err: any) => {
+        console.error('Failed to fetch customers', err);
+        this.isLoading = false;
+      }
+    });
   }
 
   onSearch(): void {
-    this.filteredCustomers = this.storage.searchCustomers(this.searchQuery);
+    this.fetchCustomers();
   }
 
   formatDate(dateStr: string): string {

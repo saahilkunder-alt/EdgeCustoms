@@ -178,6 +178,7 @@ export interface Customer {
   phone: string;
   vehicles: VehicleInfo[];
   jobIds: string[];
+  jobCount?: number;
   totalRevenue: number;
   createdAt: string;
   lastVisit: string;

@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../../services/storage.service';
+import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { PdfService } from '../../services/pdf.service';
 import { StatusBadgeComponent } from '../../components/status-badge/status-badge.component';
@@ -19,10 +20,12 @@ export class JobDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private storage = inject(StorageService);
+  private api = inject(ApiService);
   private auth = inject(AuthService);
   private pdf = inject(PdfService);
 
   job: JobCard | null = null;
+  isLoading = false;
   isAdmin = false;
   showPaymentForm = false;
   showEditHistory = false;
@@ -49,14 +52,26 @@ export class JobDetailComponent implements OnInit {
 
   ngOnInit(): void {
     this.isAdmin = this.auth.isAdmin;
+    this.fetchJob();
+  }
+
+  fetchJob(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.job = this.storage.getJob(id);
-      if (this.job) {
-        this.paymentAmount = this.job.finalAmount || 0;
-      }
-    }
-    if (!this.job) {
+      this.isLoading = true;
+      this.api.getJobById(id).subscribe({
+        next: (job: JobCard) => {
+          this.job = job;
+          this.paymentAmount = job.finalAmount || 0;
+          this.isLoading = false;
+        },
+        error: (err: any) => {
+          console.error('Failed to fetch job', err);
+          this.isLoading = false;
+          this.router.navigate(['/edge-staff/jobs']);
+        }
+      });
+    } else {
       this.router.navigate(['/edge-staff/jobs']);
     }
   }
@@ -83,20 +98,33 @@ export class JobDetailComponent implements OnInit {
       return;
     }
 
-    this.job = this.storage.updateJob(this.job.id, { status }, this.auth.currentRole || 'staff');
+    this.api.updateJob(this.job.id, { 
+      status, 
+      editor_role: this.auth.currentRole 
+    }).subscribe({
+      next: () => this.fetchJob(),
+      error: (err: any) => console.error('Status update failed', err)
+    });
   }
 
   confirmStatusUpdate(): void {
     if (!this.job || !this.pendingStatus) return;
-    this.job = this.storage.updateJob(this.job.id, { status: this.pendingStatus }, this.auth.currentRole || 'staff');
     
-    // Auto-expand payment form if changed to Completed
-    if (this.pendingStatus === JobStatus.Completed && !this.isPaid) {
-      this.showPaymentForm = true;
-    }
-
-    this.showConfirmModal = false;
-    this.pendingStatus = null;
+    this.api.updateJob(this.job.id, { 
+      status: this.pendingStatus, 
+      editor_role: this.auth.currentRole 
+    }).subscribe({
+      next: () => {
+        // Auto-expand payment form if changed to Completed
+        if (this.pendingStatus === JobStatus.Completed && !this.isPaid) {
+          this.showPaymentForm = true;
+        }
+        this.fetchJob();
+        this.showConfirmModal = false;
+        this.pendingStatus = null;
+      },
+      error: (err: any) => console.error('Status update failed', err)
+    });
   }
 
   cancelStatusUpdate(): void {
@@ -106,7 +134,8 @@ export class JobDetailComponent implements OnInit {
 
   onAfterPhotosChange(photos: string[]): void {
     if (!this.job) return;
-    this.job = this.storage.updateJob(this.job.id, { afterPhotos: photos }, this.auth.currentRole || 'staff');
+    // TODO: Implement photo update endpoint
+    console.warn('Photo update to D1 not implemented yet');
   }
 
   togglePaymentForm(): void {
@@ -115,15 +144,24 @@ export class JobDetailComponent implements OnInit {
 
   savePayment(): void {
     if (!this.job || this.paymentAmount <= 0) return;
-    this.job = this.storage.updateJob(this.job.id, {
-      payment: {
-        mode: this.paymentMode,
-        amount: this.paymentAmount,
-        transactionId: this.paymentTxnId || undefined,
-        paidAt: new Date().toISOString()
-      }
-    }, this.auth.currentRole || 'staff');
-    this.showPaymentForm = false;
+    
+    const payment = {
+      mode: this.paymentMode,
+      amount: this.paymentAmount,
+      transactionId: this.paymentTxnId || undefined,
+      paidAt: new Date().toISOString()
+    };
+
+    this.api.updateJob(this.job.id, { 
+      payment, 
+      editor_role: this.auth.currentRole 
+    }).subscribe({
+      next: () => {
+        this.fetchJob();
+        this.showPaymentForm = false;
+      },
+      error: (err: any) => console.error('Payment save failed', err)
+    });
   }
 
   async downloadPdf(): Promise<void> {

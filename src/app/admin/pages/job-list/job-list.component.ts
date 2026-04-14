@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { StorageService } from '../../services/storage.service';
+import { ApiService } from '../../services/api.service';
 import { StatusBadgeComponent } from '../../components/status-badge/status-badge.component';
 import { JobCard, JobStatus } from '../../models/job.model';
 
@@ -14,26 +15,42 @@ import { JobCard, JobStatus } from '../../models/job.model';
 })
 export class JobListComponent implements OnInit {
   private storage = inject(StorageService);
+  private api = inject(ApiService);
 
   allJobs: JobCard[] = [];
   filteredJobs: JobCard[] = [];
   searchQuery = '';
   activeFilter: string = 'All';
+  isLoading = false;
 
   statusFilters = ['All', 'Received', 'In Progress', 'Completed', 'Delivered'];
 
   ngOnInit(): void {
-    this.allJobs = this.storage.getAllJobs();
-    this.applyFilter();
+    this.fetchJobs();
+  }
+
+  fetchJobs(): void {
+    this.isLoading = true;
+    this.api.getJobs(this.activeFilter, this.searchQuery).subscribe({
+      next: (jobs: JobCard[]) => {
+        this.allJobs = jobs;
+        this.filteredJobs = jobs;
+        this.isLoading = false;
+      },
+      error: (err: any) => {
+        console.error('Failed to fetch jobs', err);
+        this.isLoading = false;
+      }
+    });
   }
 
   setFilter(filter: string): void {
     this.activeFilter = filter;
-    this.applyFilter();
+    this.fetchJobs();
   }
 
   onSearch(): void {
-    this.applyFilter();
+    this.fetchJobs();
   }
 
   private applyFilter(): void {

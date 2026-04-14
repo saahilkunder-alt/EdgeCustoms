@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { StorageService } from '../../services/storage.service';
+import { ApiService } from '../../services/api.service';
 import { StatusBadgeComponent } from '../../components/status-badge/status-badge.component';
 import { Customer, JobCard } from '../../models/job.model';
 
@@ -15,22 +16,33 @@ export class CustomerDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private storage = inject(StorageService);
+  private api = inject(ApiService);
 
   customer: Customer | null = null;
   jobs: JobCard[] = [];
+  isLoading = false;
 
   ngOnInit(): void {
+    this.fetchCustomer();
+  }
+
+  fetchCustomer(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.customer = this.storage.getCustomer(id);
-      if (this.customer) {
-        this.jobs = this.customer.jobIds
-          .map(jid => this.storage.getJob(jid))
-          .filter((j): j is JobCard => j !== null)
-          .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-      }
-    }
-    if (!this.customer) {
+      this.isLoading = true;
+      this.api.getCustomerById(id).subscribe({
+        next: (data) => {
+          this.customer = data;
+          this.jobs = data.jobs;
+          this.isLoading = false;
+        },
+        error: (err) => {
+          console.error('Failed to fetch customer', err);
+          this.isLoading = false;
+          this.router.navigate(['/edge-staff/customers']);
+        }
+      });
+    } else {
       this.router.navigate(['/edge-staff/customers']);
     }
   }
