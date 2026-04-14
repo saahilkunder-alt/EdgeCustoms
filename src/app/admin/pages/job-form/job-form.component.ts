@@ -29,14 +29,36 @@ export class JobFormComponent implements OnInit {
   currentStep = 1;
   totalSteps = 4;
   isLoading = false;
+  private isChangingCategory = false;
 
   // Step 1 - Customer & Vehicle
   customerPhone = '';
   customerName = '';
   vehicleCategory: VehicleCategory | '' = '';
   vehicleType: VehicleType | '' = '';
-  carBrand = '';
-  carModel = '';
+  private _carBrand = '';
+  private _carModel = '';
+
+  get carBrand() { return this._carBrand; }
+  set carBrand(v: string) {
+    if (this._carBrand && !v && this.currentStep > 1) {
+      console.warn('OVERRIDE BLOCKED: carBrand being cleared on step', this.currentStep);
+      console.trace();
+      return;
+    }
+    this._carBrand = v;
+  }
+
+  get carModel() { return this._carModel; }
+  set carModel(v: string) {
+    if (this._carModel && !v && this.currentStep > 1) {
+      console.warn('OVERRIDE BLOCKED: carModel being cleared on step', this.currentStep);
+      console.trace();
+      return;
+    }
+    this._carModel = v;
+  }
+
   customBrand = '';
   customModel = '';
   customColor = '';
@@ -68,60 +90,75 @@ export class JobFormComponent implements OnInit {
   existingCustomer = false;
 
   ngOnInit(): void {
-    // Default to car brands/colors until user picks a category
-    this.brands = Object.keys(CAR_BRANDS).sort();
-    this.colors = CAR_COLORS;
+    // We no longer default to 'Car' - the user must select CAR or BIKE first.
+    // This ensures the correct subcategory is chosen before Brand/Model.
+    this.vehicleCategory = '';
+    this.onVehicleCategoryChange();
   }
 
   // ── Vehicle Category / Type helpers ──
-  onVehicleCategoryChange(): void {
-    const oldBrand = this.carBrand;
-    const oldModel = this.carModel;
-    const oldCustomBrand = this.customBrand;
-    const oldCustomModel = this.customModel;
-
-    this.vehicleType = '';
-
-    if (this.vehicleCategory === 'Car') {
-      this.vehicleTypeOptions = [...CAR_TYPES];
-      this.brands = Object.keys(CAR_BRANDS).sort();
-      this.colors = CAR_COLORS;
-    } else if (this.vehicleCategory === 'Bike') {
-      this.vehicleTypeOptions = [...BIKE_TYPES];
-      this.brands = Object.keys(BIKE_BRANDS).sort();
-      this.colors = BIKE_COLORS;
-    } else {
-      this.vehicleTypeOptions = [];
-      this.brands = [];
-      this.colors = [];
+  onVehicleCategoryChange(newCat?: VehicleCategory): void {
+    if (newCat && this.vehicleCategory === newCat && this.brands.length > 0) {
+      return; // No change, don't reset
     }
 
-    // Check if the old brand is valid in the new category
-    if (oldBrand && this.brands.includes(oldBrand)) {
-      this.carBrand = oldBrand;
-      this.onBrandChange(false); // Populates this.models
-      // Check if the old model is valid for this brand in the new category
-      if (oldModel && this.models.includes(oldModel)) {
-        this.carModel = oldModel;
+    if (newCat) {
+      this.vehicleCategory = newCat;
+    }
+
+    this.isChangingCategory = true;
+
+    try {
+      const oldBrand = this.carBrand;
+      const oldModel = this.carModel;
+      const oldCustomBrand = this.customBrand;
+      const oldCustomModel = this.customModel;
+
+      this.vehicleType = '';
+
+      if (this.vehicleCategory === 'Car') {
+        this.vehicleTypeOptions = [...CAR_TYPES];
+        this.brands = Object.keys(CAR_BRANDS).sort();
+        this.colors = CAR_COLORS;
+      } else if (this.vehicleCategory === 'Bike') {
+        this.vehicleTypeOptions = [...BIKE_TYPES];
+        this.brands = Object.keys(BIKE_BRANDS).sort();
+        this.colors = BIKE_COLORS;
       } else {
-        this.carModel = '';
+        this.vehicleTypeOptions = [];
+        this.brands = [];
+        this.colors = [];
       }
-      this.customBrand = oldCustomBrand;
-      this.customModel = oldCustomModel;
-    } else {
-      // Reset if incompatible or if it was "Other" (since "Other" models vary)
-      if (oldBrand === 'Other') {
-        this.carBrand = 'Other';
-        this.onBrandChange(false);
+
+      // Check if the old brand is valid in the new category
+      if (oldBrand && this.brands.includes(oldBrand)) {
+        this.carBrand = oldBrand;
+        this.onBrandChange(false); // Populates this.models
+        // Check if the old model is valid for this brand in the new category
+        if (oldModel && this.models.includes(oldModel)) {
+          this.carModel = oldModel;
+        } else {
+          this.carModel = '';
+        }
         this.customBrand = oldCustomBrand;
         this.customModel = oldCustomModel;
       } else {
-        this.carBrand = '';
-        this.carModel = '';
-        this.customBrand = '';
-        this.customModel = '';
-        this.models = [];
+        // Reset if incompatible or if it was "Other" (since "Other" models vary)
+        if (oldBrand === 'Other') {
+          this.carBrand = 'Other';
+          this.onBrandChange(false);
+          this.customBrand = oldCustomBrand;
+          this.customModel = oldCustomModel;
+        } else {
+          this.carBrand = '';
+          this.carModel = '';
+          this.customBrand = '';
+          this.customModel = '';
+          this.models = [];
+        }
       }
+    } finally {
+      this.isChangingCategory = false;
     }
 
     this.buildServiceList();
@@ -261,6 +298,8 @@ export class JobFormComponent implements OnInit {
   get effectiveBrand(): string {
     // Priority: customBrand if isOtherBrand, otherwise carBrand. 
     // Fallback to any non-empty value if the primary one is missing.
+    console.log(this.customBrand)
+
     if (this.isOtherBrand && this.customBrand) return this.customBrand;
     if (this.carBrand && this.carBrand !== 'Other') return this.carBrand;
     return this.customBrand || this.carBrand || '';
@@ -293,6 +332,8 @@ export class JobFormComponent implements OnInit {
   }
 
   onBrandChange(resetCustom = true): void {
+    if (this.isChangingCategory) return;
+    
     const brandList = this.vehicleCategory === 'Bike' ? BIKE_BRANDS : CAR_BRANDS;
     const brandModels = brandList[this.carBrand] || [];
     // Ensure 'Other' is always available as a model option
@@ -388,10 +429,8 @@ export class JobFormComponent implements OnInit {
         return hasPhone && hasName && hasBrand && hasModel && hasReg && hasCategory && hasType;
       }
       case 2: {
-        const hasVehicleCategory = !!this.vehicleCategory;
-        const hasVehicleType = !!this.vehicleType;
         const hasServices = this.selectedServices.length > 0 && this.selectedServices.every(s => s.price > 0);
-        return hasVehicleCategory && hasVehicleType && hasServices;
+        return hasServices;
       }
       case 3: return this.beforePhotos.length > 0 && this.customerAcknowledged;
       case 4: return true;
@@ -405,8 +444,8 @@ export class JobFormComponent implements OnInit {
       job_id: this.storage.generateJobId(),
       customerName: this.customerName,
       customerPhone: this.customerPhone,
-      vehicleCategory: this.vehicleCategory,
-      vehicleType: this.vehicleType,
+      vehicleCategory: this.vehicleCategory as string,
+      vehicleType: this.vehicleType as string,
       carBrand: this.effectiveBrand,
       carModel: this.effectiveModel,
       customBrand: this.customBrand,
