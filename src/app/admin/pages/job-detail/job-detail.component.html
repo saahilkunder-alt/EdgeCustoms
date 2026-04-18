@@ -195,14 +195,16 @@
 
   <!-- Actions -->
   <div class="actions-section">
-    <button class="action-btn pdf" [disabled]="job.status === 'Completed' && !isPaid" (click)="downloadPdf()">📄 Download PDF</button>
+    @if (job.status === 'Delivered') {
+      <button class="action-btn pdf" (click)="downloadPdf()">📄 Download PDF</button>
+    }
     <button class="action-btn whatsapp" [disabled]="job.status === 'Completed' && !isPaid" (click)="shareWhatsApp()">💬 WhatsApp</button>
     @if (isAdmin) {
       <button class="action-btn admin-delete" (click)="confirmDelete()">🗑️ Delete Job</button>
     }
   </div>
   @if (job.status === 'Completed' && !isPaid) {
-    <p class="action-hint">⚠️ Please record payment to enable Download/Share.</p>
+    <p class="action-hint">⚠️ Please record payment to enable WhatsApp sharing.</p>
   }
 
   <!-- Edit History -->

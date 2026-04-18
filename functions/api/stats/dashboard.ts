@@ -14,7 +14,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         COUNT(*) as total,
         SUM(CASE WHEN status = 'In Progress' THEN 1 ELSE 0 END) as inProgress,
         SUM(CASE WHEN status IN ('Completed', 'Delivered') THEN 1 ELSE 0 END) as completed,
-        SUM(final_amount) as revenue
+        SUM(CASE WHEN status IN ('Completed', 'Delivered') THEN final_amount ELSE 0 END) as revenue
       FROM jobs 
       WHERE created_at LIKE ? AND is_deleted = 0
     `;

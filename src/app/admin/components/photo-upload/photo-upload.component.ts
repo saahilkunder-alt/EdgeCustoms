@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import heic2any from 'heic2any';
 
 @Component({
   selector: 'app-photo-upload',
@@ -120,7 +121,7 @@ export class PhotoUploadComponent {
   @Input() maxPhotos = 5;
   @Output() photosChange = new EventEmitter<string[]>();
 
-  onFileSelected(event: Event): void {
+  async onFileSelected(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
     if (!input.files) return;
 
@@ -128,12 +129,29 @@ export class PhotoUploadComponent {
     const files = Array.from(input.files).slice(0, remaining);
 
     for (const file of files) {
-      this.compressAndAdd(file);
+      let blob: Blob = file;
+      const lowerName = file.name.toLowerCase();
+      const isHeic = lowerName.endsWith('.heic') || lowerName.endsWith('.heif') || 
+                     file.type === 'image/heic' || file.type === 'image/heif';
+
+      if (isHeic) {
+        try {
+          const converted = await heic2any({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.9
+          });
+          blob = Array.isArray(converted) ? converted[0] : converted;
+        } catch (e) {
+          console.error('HEIC conversion failed', e);
+        }
+      }
+      this.compressAndAdd(blob);
     }
     input.value = '';
   }
 
-  private compressAndAdd(file: File): void {
+  private compressAndAdd(blob: Blob): void {
     const reader = new FileReader();
     reader.onload = () => {
       const img = new Image();
@@ -156,7 +174,7 @@ export class PhotoUploadComponent {
       };
       img.src = reader.result as string;
     };
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(blob);
   }
 
   removePhoto(index: number): void {
