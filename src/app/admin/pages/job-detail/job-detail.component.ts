@@ -5,6 +5,7 @@ import { StorageService } from '../../services/storage.service';
 import { ApiService } from '../../services/api.service';
 import { AuthService } from '../../services/auth.service';
 import { PdfService } from '../../services/pdf.service';
+import { ExcelService } from '../../services/excel.service';
 import { StatusBadgeComponent } from '../../components/status-badge/status-badge.component';
 import { PhotoUploadComponent } from '../../components/photo-upload/photo-upload.component';
 import { JobCard, JobStatus, PaymentMode } from '../../models/job.model';
@@ -23,6 +24,7 @@ export class JobDetailComponent implements OnInit {
   private api = inject(ApiService);
   private auth = inject(AuthService);
   private pdf = inject(PdfService);
+  private excel = inject(ExcelService);
 
   job: JobCard | null = null;
   isLoading = false;
@@ -197,7 +199,8 @@ export class JobDetailComponent implements OnInit {
     if (this.job.status === JobStatus.Completed && !this.isPaid) {
       return;
     }
-    await this.pdf.generateJobCardPdf(this.job);
+    // Now using Excel service for dynamic invoice generation as requested
+    await this.excel.generateInvoice(this.job);
   }
 
   shareWhatsApp(): void {

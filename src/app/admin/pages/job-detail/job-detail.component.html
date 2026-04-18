@@ -195,8 +195,8 @@
 
   <!-- Actions -->
   <div class="actions-section">
-    @if (job.status === 'Delivered') {
-      <button class="action-btn pdf" (click)="downloadPdf()">📄 Download PDF</button>
+    @if (job.status === 'Completed' || job.status === 'Delivered') {
+      <button class="action-btn pdf" (click)="downloadPdf()">📊 Download Invoice</button>
     }
     <button class="action-btn whatsapp" [disabled]="job.status === 'Completed' && !isPaid" (click)="shareWhatsApp()">💬 WhatsApp</button>
     @if (isAdmin) {
