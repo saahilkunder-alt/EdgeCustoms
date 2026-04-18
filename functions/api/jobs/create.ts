@@ -93,14 +93,18 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       `).bind(crypto.randomUUID(), jobId, photo);
     });
 
-    // Execute all in batch
+    // Execute main metadata in batch
     await db.batch([
       customerUpsert,
       vehicleUpsert,
       jobInsert,
-      ...serviceInserts,
-      ...photoInserts
+      ...serviceInserts
     ]);
+
+    // Execute photo inserts sequentially to avoid 1MB batch limit
+    for (const photoStmt of photoInserts) {
+      await photoStmt.run();
+    }
 
     return Response.json({ success: true, id: job_id });
 

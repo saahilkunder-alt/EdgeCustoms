@@ -48,25 +48,22 @@ export const onRequestPatch: PagesFunction<Env> = async (context) => {
       );
     }
 
-    // 4. Photos (After Photos replacement)
-    if (afterPhotos) {
-      // First delete existing after photos
-      statements.push(
-        context.env.DB.prepare('DELETE FROM job_photos WHERE job_id = ? AND photo_type = "after"').bind(job.id)
-      );
-      // Then insert new ones
-      for (const photo of afterPhotos) {
-        statements.push(
-          context.env.DB.prepare(`
-            INSERT INTO job_photos (id, job_id, photo_type, photo_url)
-            VALUES (?, ?, 'after', ?)
-          `).bind(crypto.randomUUID(), job.id, photo)
-        );
-      }
-    }
-
     if (statements.length > 0) {
       await context.env.DB.batch(statements);
+    }
+
+    // 5. Photos (After Photos replacement) - Execute outside main batch
+    if (afterPhotos) {
+      // Delete existing
+      await context.env.DB.prepare('DELETE FROM job_photos WHERE job_id = ? AND photo_type = "after"').bind(job.id).run();
+      
+      // Insert new sequentially
+      for (const photo of afterPhotos) {
+        await context.env.DB.prepare(`
+          INSERT INTO job_photos (id, job_id, photo_type, photo_url)
+          VALUES (?, ?, 'after', ?)
+        `).bind(crypto.randomUUID(), job.id, photo).run();
+      }
     }
 
     return Response.json({ success: true });

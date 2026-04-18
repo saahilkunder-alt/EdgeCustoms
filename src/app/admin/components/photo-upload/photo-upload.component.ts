@@ -139,7 +139,7 @@ export class PhotoUploadComponent {
           const converted = await heic2any({
             blob: file,
             toType: 'image/jpeg',
-            quality: 0.9
+            quality: 0.8
           });
           blob = Array.isArray(converted) ? converted[0] : converted;
         } catch (e) {
@@ -157,7 +157,7 @@ export class PhotoUploadComponent {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const maxSize = 1200;
+        const maxSize = 1000;
         let w = img.width;
         let h = img.height;
         if (w > maxSize || h > maxSize) {
@@ -168,7 +168,7 @@ export class PhotoUploadComponent {
         canvas.height = h;
         const ctx = canvas.getContext('2d')!;
         ctx.drawImage(img, 0, 0, w, h);
-        const compressed = canvas.toDataURL('image/webp', 0.8);
+        const compressed = canvas.toDataURL('image/webp', 0.6);
         this.photos = [...this.photos, compressed];
         this.photosChange.emit(this.photos);
       };
