@@ -20,8 +20,11 @@ export interface DashboardData {
 export class ApiService {
   private http = inject(HttpClient);
 
-  getDashboardData(): Observable<DashboardData> {
-    return this.http.get<{ success: boolean, data: DashboardData }>('/api/stats/dashboard')
+  getDashboardData(date?: string): Observable<DashboardData> {
+    let params = new HttpParams();
+    if (date) params = params.set('date', date);
+
+    return this.http.get<{ success: boolean, data: DashboardData }>('/api/stats/dashboard', { params })
       .pipe(
         map(res => {
           if (!res.success) throw new Error('API Error');
@@ -97,6 +100,16 @@ export class ApiService {
       .pipe(
         map(res => {
           if (!res.success) throw new Error('Update failed');
+          return;
+        })
+      );
+  }
+
+  deleteJob(id: string): Observable<void> {
+    return this.http.delete<{ success: boolean }>(`/api/jobs/${id}`)
+      .pipe(
+        map(res => {
+          if (!res.success) throw new Error('Delete failed');
           return;
         })
       );

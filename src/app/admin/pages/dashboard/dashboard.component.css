@@ -4,6 +4,26 @@
 
 .page-header {
   margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date-picker-btn {
+  background: #141414;
+  border: 1px solid #262626;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  outline: none;
+  cursor: pointer;
+  color-scheme: dark;
+}
+
+.date-picker-btn:focus {
+  border-color: #ADFF2F;
 }
 .page-title {
   font-family: 'Outfit', sans-serif;

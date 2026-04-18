@@ -4,9 +4,11 @@ export interface Env {
 
 export const onRequestGet: PagesFunction<Env> = async (context) => {
   try {
-    const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+    const url = new URL(context.request.url);
+    const dateParam = url.searchParams.get('date');
+    const targetDate = dateParam || new Date().toISOString().split('T')[0]; // YYYY-MM-DD
 
-    // 1. Get Today's Stats
+    // 1. Get Target Date's Stats
     const statsQuery = `
       SELECT 
         COUNT(*) as total,
@@ -16,9 +18,9 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       FROM jobs 
       WHERE created_at LIKE ? AND is_deleted = 0
     `;
-    const stats = await context.env.DB.prepare(statsQuery).bind(`${today}%`).first() as any;
+    const stats = await context.env.DB.prepare(statsQuery).bind(`${targetDate}%`).first() as any;
 
-    // 2. Get Recent Jobs (Top 5)
+    // 2. Get Recent Jobs for the target date
     const recentJobsQuery = `
       SELECT 
         id as internal_id, 
@@ -31,14 +33,14 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         final_amount as finalAmount,
         created_at as createdAt
       FROM jobs 
-      WHERE is_deleted = 0 
+      WHERE is_deleted = 0 AND created_at LIKE ?
       ORDER BY created_at DESC 
       LIMIT 5
     `;
-    const { results: recentJobs } = await context.env.DB.prepare(recentJobsQuery).all();
+    const { results: recentJobs } = await context.env.DB.prepare(recentJobsQuery).bind(`${targetDate}%`).all();
 
-    // 3. Get Total Customer Count
-    const customerCountQuery = `SELECT COUNT(*) as count FROM customers`;
+    // 3. Get Total Customer Count (only those with active jobs)
+    const customerCountQuery = `SELECT COUNT(DISTINCT customer_id) as count FROM jobs WHERE is_deleted = 0`;
     const customerCount = await context.env.DB.prepare(customerCountQuery).first() as any;
 
     return Response.json({

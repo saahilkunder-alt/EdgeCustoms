@@ -79,3 +79,25 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     return Response.json({ success: false, error: err.message }, { status: 500 });
   }
 };
+
+export const onRequestDelete: PagesFunction<Env> = async (context) => {
+  try {
+    const id = context.params.id;
+
+    // Soft delete the job by setting is_deleted = 1
+    const updateQuery = `
+      UPDATE jobs 
+      SET is_deleted = 1, updated_at = CURRENT_TIMESTAMP
+      WHERE job_id = ?
+    `;
+    const result = await context.env.DB.prepare(updateQuery).bind(id).run();
+
+    if (result.success) {
+      return Response.json({ success: true, message: 'Job deleted successfully' });
+    } else {
+      throw new Error('Failed to update database');
+    }
+  } catch (err: any) {
+    return Response.json({ success: false, error: err.message }, { status: 500 });
+  }
+};

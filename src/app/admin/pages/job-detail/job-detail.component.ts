@@ -132,6 +132,26 @@ export class JobDetailComponent implements OnInit {
     this.pendingStatus = null;
   }
 
+  showDeleteModal = false;
+
+  confirmDelete(): void {
+    this.showDeleteModal = true;
+  }
+
+  cancelDelete(): void {
+    this.showDeleteModal = false;
+  }
+
+  deleteJob(): void {
+    if (!this.job) return;
+    this.api.deleteJob(this.job.id).subscribe({
+      next: () => {
+        this.router.navigate(['/edge-staff/jobs']);
+      },
+      error: (err: any) => console.error('Failed to delete job', err)
+    });
+  }
+
   onAfterPhotosChange(photos: string[]): void {
     if (!this.job) return;
     // TODO: Implement photo update endpoint

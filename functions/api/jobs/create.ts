@@ -40,11 +40,13 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       VALUES (?, ?, ?, CURRENT_TIMESTAMP)
       ON CONFLICT(phone) DO UPDATE SET 
         name = excluded.name, 
-        last_visit = CURRENT_TIMESTAMP
+        last_visit = CURRENT_TIMESTAMP,
+        updated_at = CURRENT_TIMESTAMP
     `).bind(customerId, customerName, customerPhone);
 
     // 2. Get or Create Vehicle
     const vehicleId = crypto.randomUUID();
+    const registrationNumberUpper = registrationNumber ? registrationNumber.toUpperCase() : '';
     const vehicleUpsert = db.prepare(`
       INSERT INTO customer_vehicles (id, customer_id, brand, model, custom_brand, custom_model, registration_number, color, odometer_reading, fuel_level)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -56,7 +58,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
         color = excluded.color,
         odometer_reading = excluded.odometer_reading,
         fuel_level = excluded.fuel_level
-    `).bind(vehicleId, customerId, carBrand, carModel, customBrand, customModel, registrationNumber.toUpperCase(), carColor, odometerReading, fuelLevel);
+    `).bind(vehicleId, customerId, carBrand, carModel, customBrand, customModel, registrationNumberUpper, carColor, odometerReading, fuelLevel);
 
     // 3. Create Job
     const jobId = crypto.randomUUID();

@@ -17,7 +17,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         c.created_at as createdAt,
         (SELECT COUNT(*) FROM jobs WHERE customer_id = c.id AND is_deleted = 0) as jobCount
       FROM customers c
-      LEFT JOIN jobs j ON c.id = j.customer_id AND j.is_deleted = 0
+      INNER JOIN jobs j ON c.id = j.customer_id AND j.is_deleted = 0
     `;
 
     const params: any[] = [];

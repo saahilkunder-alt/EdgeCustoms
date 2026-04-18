@@ -1,5 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DatePipe } from '@angular/common';
 import { StorageService } from '../../services/storage.service';
 import { AuthService } from '../../services/auth.service';
 import { StatusBadgeComponent } from '../../components/status-badge/status-badge.component';
@@ -9,7 +10,7 @@ import { ApiService, DashboardData } from '../../services/api.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [RouterLink, StatusBadgeComponent],
+  imports: [RouterLink, StatusBadgeComponent, DatePipe],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
@@ -23,15 +24,24 @@ export class DashboardComponent implements OnInit {
   totalCustomers = 0;
   isAdmin = false;
   isLoading = true;
+  selectedDate: string = new Date().toISOString().split('T')[0];
 
   ngOnInit(): void {
     this.isAdmin = this.auth.isAdmin;
     this.loadDashboardData();
   }
 
+  onDateChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.value) {
+      this.selectedDate = input.value;
+      this.loadDashboardData();
+    }
+  }
+
   loadDashboardData(): void {
     this.isLoading = true;
-    this.api.getDashboardData().subscribe({
+    this.api.getDashboardData(this.selectedDate).subscribe({
       next: (data: DashboardData) => {
         this.stats = data.stats;
         this.recentJobs = data.recentJobs;

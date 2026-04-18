@@ -14,7 +14,7 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
         COALESCE(SUM(j.final_amount), 0) as totalRevenue,
         MAX(j.created_at) as lastVisit
       FROM customers c
-      LEFT JOIN jobs j ON c.id = j.customer_id AND j.is_deleted = 0
+      INNER JOIN jobs j ON c.id = j.customer_id AND j.is_deleted = 0
       WHERE c.id = ?
       GROUP BY c.id
     `).bind(id).first() as any;

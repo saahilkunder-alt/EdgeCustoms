@@ -1,7 +1,12 @@
 <div class="dashboard">
   <div class="page-header">
-    <h1 class="page-title">Dashboard</h1>
-    <p class="page-sub">Today's overview</p>
+    <div class="header-title">
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-sub">Snapshot for {{ selectedDate | date:'mediumDate' }}</p>
+    </div>
+    <div class="header-actions">
+      <input type="date" class="date-picker-btn" [value]="selectedDate" (change)="onDateChange($event)" />
+    </div>
   </div>
 
   @if (isLoading) {
@@ -16,7 +21,7 @@
         <span class="stat-icon">📋</span>
         <div class="stat-info">
           <span class="stat-value">{{ stats.total }}</span>
-          <span class="stat-label">Today's Jobs</span>
+          <span class="stat-label">Total Jobs</span>
         </div>
       </div>
       <div class="stat-card accent">
