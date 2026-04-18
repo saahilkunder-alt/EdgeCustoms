@@ -5,7 +5,7 @@ export interface Env {
 export const onRequestPatch: PagesFunction<Env> = async (context) => {
   try {
     const body: any = await context.request.json();
-    const { id, status, payment, editor_role } = body; // id is job_id (EC-...)
+    const { id, status, payment, afterPhotos, editor_role } = body; // id is job_id (EC-...)
 
     // 1. Get internal ID
     const job = await context.env.DB.prepare('SELECT id, status FROM jobs WHERE job_id = ?').bind(id).first() as any;
@@ -46,6 +46,23 @@ export const onRequestPatch: PagesFunction<Env> = async (context) => {
           job.id
         )
       );
+    }
+
+    // 4. Photos (After Photos replacement)
+    if (afterPhotos) {
+      // First delete existing after photos
+      statements.push(
+        context.env.DB.prepare('DELETE FROM job_photos WHERE job_id = ? AND photo_type = "after"').bind(job.id)
+      );
+      // Then insert new ones
+      for (const photo of afterPhotos) {
+        statements.push(
+          context.env.DB.prepare(`
+            INSERT INTO job_photos (id, job_id, photo_type, photo_url)
+            VALUES (?, ?, 'after', ?)
+          `).bind(crypto.randomUUID(), job.id, photo)
+        );
+      }
     }
 
     if (statements.length > 0) {

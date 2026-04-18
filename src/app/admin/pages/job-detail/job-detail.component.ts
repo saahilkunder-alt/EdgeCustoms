@@ -154,8 +154,16 @@ export class JobDetailComponent implements OnInit {
 
   onAfterPhotosChange(photos: string[]): void {
     if (!this.job) return;
-    // TODO: Implement photo update endpoint
-    console.warn('Photo update to D1 not implemented yet');
+    
+    this.api.updateJob(this.job.id, { 
+      afterPhotos: photos,
+      editor_role: this.auth.currentRole 
+    }).subscribe({
+      next: () => {
+        if (this.job) this.job.afterPhotos = photos;
+      },
+      error: (err: any) => console.error('Photo update failed', err)
+    });
   }
 
   togglePaymentForm(): void {

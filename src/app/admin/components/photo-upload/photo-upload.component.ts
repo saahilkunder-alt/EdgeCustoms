@@ -13,12 +13,29 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
             <button class="photo-remove" (click)="removePhoto($index)">✕</button>
           </div>
         }
-        <label class="photo-add" [class.disabled]="photos.length >= maxPhotos">
-          <input type="file" accept="image/*" [attr.capture]="useCamera ? 'environment' : null"
-            (change)="onFileSelected($event)" [disabled]="photos.length >= maxPhotos" multiple>
-          <span class="add-icon">📷</span>
-          <span class="add-text">{{ photos.length >= maxPhotos ? 'Max reached' : 'Add Photo' }}</span>
-        </label>
+        
+        @if (photos.length < maxPhotos) {
+          <!-- Camera Option -->
+          <label class="photo-add camera">
+            <input type="file" accept="image/*" capture="environment"
+              (change)="onFileSelected($event)">
+            <span class="add-icon">📸</span>
+            <span class="add-text">Camera</span>
+          </label>
+
+          <!-- Gallery Option -->
+          <label class="photo-add gallery">
+            <input type="file" accept="image/*"
+              (change)="onFileSelected($event)" multiple>
+            <span class="add-icon">🖼️</span>
+            <span class="add-text">Gallery</span>
+          </label>
+        } @else {
+          <div class="photo-add disabled">
+            <span class="add-icon">🚫</span>
+            <span class="add-text">Max reached</span>
+          </div>
+        }
       </div>
     </div>
   `,
@@ -80,6 +97,9 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
       border-color: #ADFF2F;
       background: rgba(173,255,47,0.05);
     }
+    .photo-add.camera:hover:not(.disabled) { border-color: #3b82f6; background: rgba(59,130,246,0.05); }
+    .photo-add.gallery:hover:not(.disabled) { border-color: #f59e0b; background: rgba(245,158,11,0.05); }
+    
     .photo-add.disabled {
       opacity: 0.4;
       cursor: not-allowed;
@@ -88,8 +108,9 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     .add-icon { font-size: 24px; margin-bottom: 4px; }
     .add-text {
       font-size: 10px;
-      color: #666;
+      color: #888;
       font-family: 'Outfit', sans-serif;
+      font-weight: 600;
     }
   `]
 })
@@ -97,7 +118,6 @@ export class PhotoUploadComponent {
   @Input() label = 'Photos';
   @Input() photos: string[] = [];
   @Input() maxPhotos = 5;
-  @Input() useCamera = true;
   @Output() photosChange = new EventEmitter<string[]>();
 
   onFileSelected(event: Event): void {
@@ -119,7 +139,7 @@ export class PhotoUploadComponent {
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement('canvas');
-        const maxSize = 800;
+        const maxSize = 1200;
         let w = img.width;
         let h = img.height;
         if (w > maxSize || h > maxSize) {
@@ -130,7 +150,7 @@ export class PhotoUploadComponent {
         canvas.height = h;
         const ctx = canvas.getContext('2d')!;
         ctx.drawImage(img, 0, 0, w, h);
-        const compressed = canvas.toDataURL('image/jpeg', 0.6);
+        const compressed = canvas.toDataURL('image/webp', 0.8);
         this.photos = [...this.photos, compressed];
         this.photosChange.emit(this.photos);
       };

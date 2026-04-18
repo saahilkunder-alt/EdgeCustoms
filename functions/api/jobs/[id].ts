@@ -51,11 +51,25 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       FROM job_services 
       WHERE job_id = ?
     `;
-    // Note: We need the internal UUID for the foreign key, or we can use the human ID if we join.
-    // However, job_services references jobs(id) which is the internal_id.
     const { results: services } = await context.env.DB.prepare(servicesQuery).bind(job.internal_id).all();
 
-    // 3. Format Payment Info for JobCard model
+    // 3. Get Photos
+    const photosQuery = `
+      SELECT photo_url, photo_type
+      FROM job_photos 
+      WHERE job_id = ?
+    `;
+    const { results: photos } = await context.env.DB.prepare(photosQuery).bind(job.internal_id).all() as any;
+
+    const beforePhotos = (photos || [])
+      .filter((p: any) => p.photo_type === 'before')
+      .map((p: any) => p.photo_url);
+
+    const afterPhotos = (photos || [])
+      .filter((p: any) => p.photo_type === 'after')
+      .map((p: any) => p.photo_url);
+
+    // 4. Format Payment Info for JobCard model
     const payment = job.payment_mode ? {
       mode: job.payment_mode,
       amount: job.payment_amount,
@@ -68,8 +82,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
       ...job,
       selectedServices: services,
       payment,
-      beforePhotos: [], // TODO: Link R2 later
-      afterPhotos: [],
+      beforePhotos,
+      afterPhotos,
       editHistory: []   // TODO: Fetch from job_edit_log
     };
 

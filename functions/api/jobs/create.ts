@@ -26,6 +26,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       discountValue,
       discountAmount,
       finalAmount,
+      beforePhotos,
       job_id
     } = data;
 
@@ -84,12 +85,21 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
       `).bind(crypto.randomUUID(), jobId, svc.id, svc.name, svc.category, svc.price);
     });
 
+    // 5. Create Job Photos (Before Photos)
+    const photoInserts = (beforePhotos || []).map((photo: string) => {
+      return db.prepare(`
+        INSERT INTO job_photos (id, job_id, photo_type, photo_url)
+        VALUES (?, ?, 'before', ?)
+      `).bind(crypto.randomUUID(), jobId, photo);
+    });
+
     // Execute all in batch
     await db.batch([
       customerUpsert,
       vehicleUpsert,
       jobInsert,
-      ...serviceInserts
+      ...serviceInserts,
+      ...photoInserts
     ]);
 
     return Response.json({ success: true, id: job_id });
