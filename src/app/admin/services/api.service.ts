@@ -12,6 +12,7 @@ export interface DashboardData {
   };
   recentJobs: JobCard[];
   totalCustomers: number;
+  monthlyRevenue: number;
 }
 
 @Injectable({

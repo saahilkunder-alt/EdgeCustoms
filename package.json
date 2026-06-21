@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:EdgeCustoms": "node dist/edge-customs/server/server.mjs"
+    "serve:ssr:EdgeCustoms": "node dist/edge-customs/server/server.mjs",
+    "pages:dev": "npx wrangler pages dev dist/edge-customs/browser"
   },
   "private": true,
   "dependencies": {

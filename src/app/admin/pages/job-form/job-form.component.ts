@@ -432,7 +432,7 @@ export class JobFormComponent implements OnInit {
         const hasServices = this.selectedServices.length > 0 && this.selectedServices.every(s => s.price > 0);
         return hasServices;
       }
-      case 3: return this.beforePhotos.length > 0 && this.customerAcknowledged;
+      case 3: return this.customerAcknowledged;
       case 4: return true;
       default: return false;
     }

@@ -43,6 +43,15 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
     const customerCountQuery = `SELECT COUNT(DISTINCT customer_id) as count FROM jobs WHERE is_deleted = 0`;
     const customerCount = await context.env.DB.prepare(customerCountQuery).first() as any;
 
+    // 4. Get Monthly Revenue (for the month of the selected date)
+    const monthPrefix = targetDate.substring(0, 7); // YYYY-MM
+    const monthlyRevenueQuery = `
+      SELECT COALESCE(SUM(CASE WHEN status IN ('Completed', 'Delivered') THEN final_amount ELSE 0 END), 0) as monthlyRevenue
+      FROM jobs 
+      WHERE created_at LIKE ? AND is_deleted = 0
+    `;
+    const monthlyResult = await context.env.DB.prepare(monthlyRevenueQuery).bind(`${monthPrefix}%`).first() as any;
+
     return Response.json({
       success: true,
       data: {
@@ -53,7 +62,8 @@ export const onRequestGet: PagesFunction<Env> = async (context) => {
           revenue: stats.revenue || 0
         },
         recentJobs,
-        totalCustomers: customerCount.count || 0
+        totalCustomers: customerCount.count || 0,
+        monthlyRevenue: monthlyResult.monthlyRevenue || 0
       }
     });
 

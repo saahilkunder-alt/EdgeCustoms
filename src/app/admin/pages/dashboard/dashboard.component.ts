@@ -22,6 +22,7 @@ export class DashboardComponent implements OnInit {
   stats = { total: 0, inProgress: 0, completed: 0, revenue: 0 };
   recentJobs: JobCard[] = [];
   totalCustomers = 0;
+  monthlyRevenue = 0;
   isAdmin = false;
   isLoading = true;
   selectedDate: string = new Date().toISOString().split('T')[0];
@@ -46,6 +47,7 @@ export class DashboardComponent implements OnInit {
         this.stats = data.stats;
         this.recentJobs = data.recentJobs;
         this.totalCustomers = data.totalCustomers;
+        this.monthlyRevenue = data.monthlyRevenue || 0;
         this.isLoading = false;
       },
       error: (err: any) => {

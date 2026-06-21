@@ -15,11 +15,11 @@ export type UserRole = 'admin' | 'staff';
 // ── Vehicle Category & Type ──
 export type VehicleCategory = 'Car' | 'Bike';
 
-export type CarType = 'Hatchback' | 'Sedan / Crossover' | 'SUV / MPV' | 'Luxury';
+export type CarType = 'Hatchback' | 'Sedan / Crossover' | 'SUV / MPV';
 export type BikeType = 'Below 350 CC' | 'Above 350 CC' | 'ADV/Sports above 900cc';
 export type VehicleType = CarType | BikeType;
 
-export const CAR_TYPES: CarType[] = ['Hatchback', 'Sedan / Crossover', 'SUV / MPV', 'Luxury'];
+export const CAR_TYPES: CarType[] = ['Hatchback', 'Sedan / Crossover', 'SUV / MPV'];
 export const BIKE_TYPES: BikeType[] = ['Below 350 CC', 'Above 350 CC', 'ADV/Sports above 900cc'];
 
 // ── Service Category ──
@@ -32,7 +32,7 @@ export interface ServiceItem {
 }
 
 export type ServiceCategory =
-  | 'Cars Wash'
+  | 'Car Wash'
   | 'Car Detailing'
   | 'Add-On'
   | 'Bike Wash'
@@ -50,58 +50,98 @@ export interface ServiceCatalogItem {
 export const SERVICE_CATALOG: ServiceCatalogItem[] = [
 
   // ─── Cars Wash ───
-  { id: 'cw-foam', name: 'Foam Wash', category: 'Cars Wash', forVehicle: 'Car',
-    prices: { 'Hatchback': 750, 'Sedan / Crossover': 850, 'SUV / MPV': 1000, 'Luxury': 1150 } },
-  { id: 'cw-detailed', name: 'Detailed Wash', category: 'Cars Wash', forVehicle: 'Car',
-    prices: { 'Hatchback': 900, 'Sedan / Crossover': 1000, 'SUV / MPV': 1100, 'Luxury': 1200 } },
-  { id: 'cw-premium', name: 'Premium Wash', category: 'Cars Wash', forVehicle: 'Car',
-    prices: { 'Hatchback': 1900, 'Sedan / Crossover': 2000, 'SUV / MPV': 2300, 'Luxury': 2500 } },
+  {
+    id: 'cw-foam', name: 'Foam Wash', category: 'Car Wash', forVehicle: 'Car',
+    prices: { 'Hatchback': 500, 'Sedan / Crossover': 600, 'SUV / MPV': 700 }
+  },
+  {
+    id: 'cw-detailed', name: 'Detailed Wash', category: 'Car Wash', forVehicle: 'Car',
+    prices: { 'Hatchback': 800, 'Sedan / Crossover': 900, 'SUV / MPV': 1000 }
+  },
 
   // ─── Car Detailing ───
-  { id: 'cd-interior', name: 'Interior Detailing', category: 'Car Detailing', forVehicle: 'Car',
-    prices: { 'Hatchback': 3500, 'Sedan / Crossover': 4000, 'SUV / MPV': 4500, 'Luxury': 5000 } },
-  { id: 'cd-exterior', name: 'Exterior Detailing', category: 'Car Detailing', forVehicle: 'Car',
-    prices: { 'Hatchback': 4500, 'Sedan / Crossover': 5000, 'SUV / MPV': 5500, 'Luxury': 6000 } },
-  { id: 'cd-combo', name: 'Interior & Exterior Detailing (Combo)', category: 'Car Detailing', forVehicle: 'Car',
-    prices: { 'Hatchback': 7000, 'Sedan / Crossover': 8000, 'SUV / MPV': 9000, 'Luxury': 10000 } },
+  {
+    id: 'cd-interior', name: 'Interior Detailing', category: 'Car Detailing', forVehicle: 'Car',
+    prices: { 'Hatchback': 3500, 'Sedan / Crossover': 4000, 'SUV / MPV': 4500 }
+  },
+  {
+    id: 'cd-exterior', name: 'Exterior Detailing', category: 'Car Detailing', forVehicle: 'Car',
+    prices: { 'Hatchback': 4500, 'Sedan / Crossover': 5000, 'SUV / MPV': 5500 }
+  },
+  {
+    id: 'cd-combo', name: 'Interior & Exterior Detailing (Combo)', category: 'Car Detailing', forVehicle: 'Car',
+    prices: { 'Hatchback': 7000, 'Sedan / Crossover': 8000, 'SUV / MPV': 9000 }
+  },
 
   // ─── Add-On (Car) ───
-  { id: 'cs-ppf', name: 'Paint Protection Film (PPF)', category: 'Add-On', forVehicle: 'Car',
-    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0, 'Luxury': 0 } },
-  { id: 'cs-wraps', name: 'Car Wraps', category: 'Add-On', forVehicle: 'Car',
-    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0, 'Luxury': 0 } },
-  { id: 'cs-ceramic', name: 'Ceramic Coating Package', category: 'Add-On', forVehicle: 'Car',
-    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0, 'Luxury': 0 } },
-  { id: 'cs-scanning', name: 'Scanning & Coding / Feature Unlock', category: 'Add-On', forVehicle: 'Car',
-    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0, 'Luxury': 0 } },
-  { id: 'cs-glass-windshield', name: 'Glass Polish (Windshield)', category: 'Add-On', forVehicle: 'Car',
-    prices: { 'Hatchback': 2000, 'Sedan / Crossover': 2000, 'SUV / MPV': 2500, 'Luxury': 2500 } },
-  { id: 'cs-glass-all', name: 'Glass Polish (All Glasses)', category: 'Add-On', forVehicle: 'Car',
-    prices: { 'Hatchback': 2800, 'Sedan / Crossover': 2800, 'SUV / MPV': 3400, 'Luxury': 3400 } },
-  { id: 'cs-alloy', name: 'Alloy Wheel Detailing', category: 'Add-On', forVehicle: 'Car',
-    prices: { 'Hatchback': 2500, 'Sedan / Crossover': 2500, 'SUV / MPV': 3000, 'Luxury': 3500 } },
-  { id: 'cs-engine', name: 'Engine Bay Detailing', category: 'Add-On', forVehicle: 'Car',
-    prices: { 'Hatchback': 1800, 'Sedan / Crossover': 1800, 'SUV / MPV': 2500, 'Luxury': 2500 } },
-  { id: 'cs-headlight', name: 'Head Light Restoration', category: 'Add-On', forVehicle: 'Car',
-    prices: { 'Hatchback': 1500, 'Sedan / Crossover': 1500, 'SUV / MPV': 1500, 'Luxury': 1700 } },
+  {
+    id: 'cs-ppf', name: 'Paint Protection Film (PPF)', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0 }
+  },
+  {
+    id: 'cs-wraps', name: 'Car Wraps', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0 }
+  },
+  {
+    id: 'cs-ceramic', name: 'Ceramic Coating Package', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0 }
+  },
+  {
+    id: 'cs-scanning', name: 'Scanning & Coding / Feature Unlock', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 0, 'Sedan / Crossover': 0, 'SUV / MPV': 0 }
+  },
+  {
+    id: 'cs-glass-windshield', name: 'Glass Polish (Windshield)', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 2000, 'Sedan / Crossover': 2000, 'SUV / MPV': 2500 }
+  },
+  {
+    id: 'cs-glass-all', name: 'Glass Polish (All Glasses)', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 2800, 'Sedan / Crossover': 2800, 'SUV / MPV': 3400 }
+  },
+  {
+    id: 'cs-alloy', name: 'Alloy Wheel Detailing', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 2500, 'Sedan / Crossover': 2500, 'SUV / MPV': 3000 }
+  },
+  {
+    id: 'cs-engine', name: 'Engine Bay Detailing', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 1800, 'Sedan / Crossover': 1800, 'SUV / MPV': 2500 }
+  },
+  {
+    id: 'cs-headlight', name: 'Head Light Restoration', category: 'Add-On', forVehicle: 'Car',
+    prices: { 'Hatchback': 1500, 'Sedan / Crossover': 1500, 'SUV / MPV': 1500 }
+  },
 
   // ─── Bike Wash ───
-  { id: 'bw-foam', name: 'Foam Wash', category: 'Bike Wash', forVehicle: 'Bike',
-    prices: { 'Below 350 CC': 350, 'Above 350 CC': 450, 'ADV/Sports above 900cc': 650 } },
-  { id: 'bw-detailed', name: 'Detailed Wash', category: 'Bike Wash', forVehicle: 'Bike',
-    prices: { 'Below 350 CC': 500, 'Above 350 CC': 600, 'ADV/Sports above 900cc': 800 } },
+  {
+    id: 'bw-foam', name: 'Foam Wash', category: 'Bike Wash', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 300, 'Above 350 CC': 400, 'ADV/Sports above 900cc': 500 }
+  },
+  {
+    id: 'bw-detailed', name: 'Detailed Wash', category: 'Bike Wash', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 650, 'Above 350 CC': 750, 'ADV/Sports above 900cc': 850 }
+  },
 
   // ─── Bike Add-On ───
-  { id: 'bw-chain', name: 'Chain Cleaning & Lubing', category: 'Bike Add-On', forVehicle: 'Bike',
-    prices: { 'Below 350 CC': 300, 'Above 350 CC': 300, 'ADV/Sports above 900cc': 450 } },
-  { id: 'bw-chrome', name: 'Chrome Buffing', category: 'Bike Add-On', forVehicle: 'Bike',
-    prices: { 'Below 350 CC': 4500, 'Above 350 CC': 4500, 'ADV/Sports above 900cc': 4500 } },
-  { id: 'bw-detailing', name: 'Bike Detailing', category: 'Bike Add-On', forVehicle: 'Bike',
-    prices: { 'Below 350 CC': 3200, 'Above 350 CC': 3700, 'ADV/Sports above 900cc': 4200 } },
-  { id: 'bw-ceramic', name: 'Bike Ceramic Coating', category: 'Bike Add-On', forVehicle: 'Bike',
-    prices: { 'Below 350 CC': 0, 'Above 350 CC': 0, 'ADV/Sports above 900cc': 0 } },
-  { id: 'bw-ppf', name: 'Bike Paint Protection Film (PPF)', category: 'Bike Add-On', forVehicle: 'Bike',
-    prices: { 'Below 350 CC': 0, 'Above 350 CC': 0, 'ADV/Sports above 900cc': 0 } },
+  {
+    id: 'bw-chain', name: 'Chain Cleaning & Lubing', category: 'Bike Add-On', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 300, 'Above 350 CC': 300, 'ADV/Sports above 900cc': 450 }
+  },
+  {
+    id: 'bw-chrome', name: 'Chrome Buffing', category: 'Bike Add-On', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 4500, 'Above 350 CC': 4500, 'ADV/Sports above 900cc': 4500 }
+  },
+  {
+    id: 'bw-detailing', name: 'Bike Detailing', category: 'Bike Add-On', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 3200, 'Above 350 CC': 3700, 'ADV/Sports above 900cc': 4200 }
+  },
+  {
+    id: 'bw-ceramic', name: 'Bike Ceramic Coating', category: 'Bike Add-On', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 0, 'Above 350 CC': 0, 'ADV/Sports above 900cc': 0 }
+  },
+  {
+    id: 'bw-ppf', name: 'Bike Paint Protection Film (PPF)', category: 'Bike Add-On', forVehicle: 'Bike',
+    prices: { 'Below 350 CC': 0, 'Above 350 CC': 0, 'ADV/Sports above 900cc': 0 }
+  },
 ];
 
 // ── Edit Log ──

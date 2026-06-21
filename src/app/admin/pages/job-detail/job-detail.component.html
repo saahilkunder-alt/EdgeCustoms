@@ -15,20 +15,15 @@
     <h3 class="section-label">Update Status</h3>
     <div class="status-buttons">
       @for (status of statusFlow; track status) {
-        <button class="status-btn"
-          [class.active]="job.status === status"
-          [class.received]="status === 'Received'"
-          [class.inprogress]="status === 'In Progress'"
-          [class.completed]="status === 'Completed'"
-          [class.delivered]="status === 'Delivered'"
-          [disabled]="
+      <button class="status-btn" [class.active]="job.status === status" [class.received]="status === 'Received'"
+        [class.inprogress]="status === 'In Progress'" [class.completed]="status === 'Completed'"
+        [class.delivered]="status === 'Delivered'" [disabled]="
             ( (status === 'Received' || status === 'In Progress') && (job.status === 'Completed' || job.status === 'Delivered') ) ||
             ( status === 'Completed' && job.status === 'Delivered' ) ||
             ( status === 'Delivered' && (job.status === 'Completed' && !isPaid) )
-          "
-          (click)="updateStatus(status)">
-          {{ status }}
-        </button>
+          " (click)="updateStatus(status)">
+        {{ status }}
+      </button>
       }
     </div>
   </div>
@@ -49,10 +44,10 @@
   <div class="info-card">
     <h3 class="card-title">{{ job.vehicleCategory === 'Bike' ? '🏍️' : '🚗' }} Vehicle</h3>
     @if (job.vehicleCategory && job.vehicleType) {
-      <div class="info-row">
-        <span class="info-label">Type</span>
-        <span class="info-value">{{ job.vehicleCategory }} — {{ job.vehicleType }}</span>
-      </div>
+    <div class="info-row">
+      <span class="info-label">Type</span>
+      <span class="info-value">{{ job.vehicleCategory }} — {{ job.vehicleType }}</span>
+    </div>
     }
     <div class="info-row">
       <span class="info-label">{{ job.vehicleCategory === 'Bike' ? 'Bike' : 'Car' }}</span>
@@ -80,10 +75,10 @@
   <div class="info-card">
     <h3 class="card-title">🔧 Services</h3>
     @for (svc of job.selectedServices; track svc.id) {
-      <div class="info-row">
-        <span class="info-label">{{ svc.name }}</span>
-        <span class="info-value price">₹{{ svc.price.toLocaleString() }}</span>
-      </div>
+    <div class="info-row">
+      <span class="info-label">{{ svc.name }}</span>
+      <span class="info-value price">₹{{ svc.price.toLocaleString() }}</span>
+    </div>
     }
   </div>
 
@@ -95,10 +90,10 @@
       <span class="info-value">₹{{ (job.subtotal || 0).toLocaleString() }}</span>
     </div>
     @if (job.discountAmount > 0) {
-      <div class="info-row">
-        <span class="info-label">Discount ({{ job.discountType === 'percent' ? job.discountValue + '%' : 'Flat' }})</span>
-        <span class="info-value discount">- ₹{{ job.discountAmount.toLocaleString() }}</span>
-      </div>
+    <div class="info-row">
+      <span class="info-label">Discount ({{ job.discountType === 'percent' ? job.discountValue + '%' : 'Flat' }})</span>
+      <span class="info-value discount">- ₹{{ job.discountAmount.toLocaleString() }}</span>
+    </div>
     }
     <div class="info-row total-row">
       <span class="info-label">Total</span>
@@ -108,154 +103,153 @@
 
   <!-- Payment -->
   @if (job.status === 'Completed' || job.status === 'Delivered') {
-    <div class="info-card">
+  <div class="info-card">
     <h3 class="card-title">💳 Payment</h3>
     @if (job.payment) {
-      <div class="info-row">
-        <span class="info-label">Mode</span>
-        <span class="info-value">{{ job.payment.mode }}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Amount</span>
-        <span class="info-value price">₹{{ job.payment.amount.toLocaleString() }}</span>
-      </div>
-      @if (job.payment.transactionId) {
-        <div class="info-row">
-          <span class="info-label">Txn ID</span>
-          <span class="info-value mono">{{ job.payment.transactionId }}</span>
-        </div>
-      }
-      @if (job.payment.paidAt) {
-        <div class="info-row">
-          <span class="info-label">Paid At</span>
-          <span class="info-value">{{ formatDate(job.payment.paidAt) }}</span>
-        </div>
-      }
-    } @else {
-      <button class="action-btn pay" (click)="togglePaymentForm()">
-        {{ showPaymentForm ? 'Cancel' : 'Record Payment' }}
-      </button>
-
-      @if (showPaymentForm) {
-        <div class="payment-form">
-          <div class="form-group">
-            <label class="form-label">Payment Mode</label>
-            <div class="mode-buttons">
-              @for (mode of paymentModes; track mode) {
-                <button class="mode-btn" [class.active]="paymentMode === mode" (click)="paymentMode = mode">
-                  {{ mode }}
-                </button>
-              }
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Amount (₹)</label>
-            <input type="number" class="form-input" [(ngModel)]="paymentAmount" inputmode="numeric">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Transaction ID (optional)</label>
-            <input type="text" class="form-input" [(ngModel)]="paymentTxnId" placeholder="UPI ref / Card auth">
-          </div>
-          <button class="action-btn confirm" (click)="savePayment()" [disabled]="!paymentAmount || paymentAmount <= 0">✓ Confirm Payment</button>
-        </div>
-      }
-    }
+    <div class="info-row">
+      <span class="info-label">Mode</span>
+      <span class="info-value">{{ job.payment.mode }}</span>
     </div>
+    <div class="info-row">
+      <span class="info-label">Amount</span>
+      <span class="info-value price">₹{{ job.payment.amount.toLocaleString() }}</span>
+    </div>
+    @if (job.payment.transactionId) {
+    <div class="info-row">
+      <span class="info-label">Txn ID</span>
+      <span class="info-value mono">{{ job.payment.transactionId }}</span>
+    </div>
+    }
+    @if (job.payment.paidAt) {
+    <div class="info-row">
+      <span class="info-label">Paid At</span>
+      <span class="info-value">{{ formatDate(job.payment.paidAt) }}</span>
+    </div>
+    }
+    } @else {
+    <button class="action-btn pay" (click)="togglePaymentForm()">
+      {{ showPaymentForm ? 'Cancel' : 'Record Payment' }}
+    </button>
+
+    @if (showPaymentForm) {
+    <div class="payment-form">
+      <div class="form-group">
+        <label class="form-label">Payment Mode</label>
+        <div class="mode-buttons">
+          @for (mode of paymentModes; track mode) {
+          <button class="mode-btn" [class.active]="paymentMode === mode" (click)="paymentMode = mode">
+            {{ mode }}
+          </button>
+          }
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Amount (₹)</label>
+        <input type="number" class="form-input" [(ngModel)]="paymentAmount" inputmode="numeric">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Transaction ID (optional)</label>
+        <input type="text" class="form-input" [(ngModel)]="paymentTxnId" placeholder="UPI ref / Card auth">
+      </div>
+      <button class="action-btn confirm" (click)="savePayment()" [disabled]="!paymentAmount || paymentAmount <= 0">✓
+        Confirm Payment</button>
+    </div>
+    }
+    }
+  </div>
   }
 
   <!-- Before Photos -->
   @if (job.beforePhotos && job.beforePhotos.length > 0) {
-    <div class="info-card">
-      <h3 class="card-title">📸 Before Photos</h3>
-      <div class="photo-grid">
-        @for (photo of job.beforePhotos; track $index) {
-          <img [src]="photo" alt="Before {{ $index + 1 }}" class="photo-thumb">
-        }
-      </div>
+  <div class="info-card">
+    <h3 class="card-title">📸 Before Photos</h3>
+    <div class="photo-grid">
+      @for (photo of job.beforePhotos; track $index) {
+      <img [src]="photo" alt="Before {{ $index + 1 }}" class="photo-thumb">
+      }
     </div>
+  </div>
   }
 
   <!-- After Photos -->
   <div class="info-card">
     <h3 class="card-title">📸 After Photos</h3>
-    <app-photo-upload
-      label=""
-      [photos]="job.afterPhotos || []"
-      (photosChange)="onAfterPhotosChange($event)"
+    <app-photo-upload label="" [photos]="job.afterPhotos || []" (photosChange)="onAfterPhotosChange($event)"
       [maxPhotos]="5" />
   </div>
 
   <!-- Remarks -->
   @if (job.remarks) {
-    <div class="info-card">
-      <h3 class="card-title">📝 Remarks</h3>
-      <p class="remarks-text">{{ job.remarks }}</p>
-    </div>
+  <div class="info-card">
+    <h3 class="card-title">📝 Remarks</h3>
+    <p class="remarks-text">{{ job.remarks }}</p>
+  </div>
   }
 
   <!-- Actions -->
   <div class="actions-section">
     @if (job.status === 'Completed' || job.status === 'Delivered') {
-      <button class="action-btn pdf" (click)="downloadPdf()">📊 Download Invoice</button>
+    <button class="action-btn pdf" (click)="downloadPdf()">📊 Download Invoice</button>
     }
-    <button class="action-btn whatsapp" [disabled]="job.status === 'Completed' && !isPaid" (click)="shareWhatsApp()">💬 WhatsApp</button>
+    <button class="action-btn whatsapp" [disabled]="job.status === 'Completed' && !isPaid" (click)="shareWhatsApp()">💬
+      WhatsApp</button>
     @if (isAdmin) {
-      <button class="action-btn admin-delete" (click)="confirmDelete()">🗑️ Delete Job</button>
+    <button class="action-btn admin-delete" (click)="confirmDelete()">🗑️ Delete Job</button>
     }
   </div>
   @if (job.status === 'Completed' && !isPaid) {
-    <p class="action-hint">⚠️ Please record payment to enable WhatsApp sharing.</p>
+  <p class="action-hint">⚠️ Please record payment to enable WhatsApp sharing.</p>
   }
 
   <!-- Edit History -->
   @if (job.editHistory && job.editHistory.length > 0) {
-    <div class="info-card">
-      <button class="history-toggle" (click)="showEditHistory = !showEditHistory">
-        📜 Edit History ({{ job.editHistory.length }})
-        <span class="toggle-arrow" [class.rotated]="showEditHistory">▼</span>
-      </button>
-      @if (showEditHistory) {
-        <div class="history-list">
-          @for (log of job.editHistory; track log.timestamp) {
-            <div class="history-item">
-              <span class="history-time">{{ formatDate(log.timestamp) }}</span>
-              <span class="history-role">{{ log.editorRole }}</span>
-              <span class="history-detail">{{ formatField(log.field) }}: {{ log.oldValue }} → {{ log.newValue }}</span>
-            </div>
-          }
-        </div>
+  <div class="info-card">
+    <button class="history-toggle" (click)="showEditHistory = !showEditHistory">
+      📜 Edit History ({{ job.editHistory.length }})
+      <span class="toggle-arrow" [class.rotated]="showEditHistory">▼</span>
+    </button>
+    @if (showEditHistory) {
+    <div class="history-list">
+      @for (log of job.editHistory; track log.timestamp) {
+      <div class="history-item">
+        <span class="history-time">{{ formatDate(log.timestamp) }}</span>
+        <span class="history-role">{{ log.editorRole }}</span>
+        <span class="history-detail">{{ formatField(log.field) }}: {{ log.oldValue }} → {{ log.newValue }}</span>
+      </div>
       }
     </div>
+    }
+  </div>
   }
 
   <!-- Confirmation Modal -->
   @if (showConfirmModal) {
-    <div class="modal-overlay" (click)="cancelStatusUpdate()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-icon">⚠️</div>
-        <h3 class="modal-title">Confirm Status Change</h3>
-        <p class="modal-message">Are you sure you want to mark this job as <strong>Completed</strong>?</p>
-        <div class="modal-actions">
-          <button class="modal-btn cancel" (click)="cancelStatusUpdate()">No, Cancel</button>
-          <button class="modal-btn confirm" (click)="confirmStatusUpdate()">Yes, Complete It</button>
-        </div>
+  <div class="modal-overlay" (click)="cancelStatusUpdate()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-icon">⚠️</div>
+      <h3 class="modal-title">Confirm Status Change</h3>
+      <p class="modal-message">Are you sure you want to mark this job as <strong>Completed</strong>?</p>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" (click)="cancelStatusUpdate()">No, Cancel</button>
+        <button class="modal-btn confirm" (click)="confirmStatusUpdate()">Yes, Complete It</button>
       </div>
     </div>
+  </div>
   }
 
   <!-- Delete Confirmation Modal -->
   @if (showDeleteModal) {
-    <div class="modal-overlay" (click)="cancelDelete()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        <div class="modal-icon">🗑️</div>
-        <h3 class="modal-title">Delete Job Card</h3>
-        <p class="modal-message">Are you sure you want to delete this job card? It will be hidden from the dashboard.</p>
-        <div class="modal-actions">
-          <button class="modal-btn cancel" (click)="cancelDelete()">No, Cancel</button>
-          <button class="modal-btn confirm admin-delete-confirm" (click)="deleteJob()">Yes, Delete It</button>
-        </div>
+  <div class="modal-overlay" (click)="cancelDelete()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-icon">🗑️</div>
+      <h3 class="modal-title">Delete Job Card</h3>
+      <p class="modal-message">Are you sure you want to delete this job card? It will be hidden from the dashboard.</p>
+      <div class="modal-actions">
+        <button class="modal-btn cancel" (click)="cancelDelete()">No, Cancel</button>
+        <button class="modal-btn confirm admin-delete-confirm" (click)="deleteJob()">Yes, Delete It</button>
       </div>
     </div>
+  </div>
   }
 </div>
 }

@@ -59,6 +59,7 @@
 .stat-card:active { transform: scale(0.98); }
 .stat-card.accent { border-color: rgba(245, 158, 11, 0.2); }
 .stat-card.revenue { border-color: rgba(173, 255, 47, 0.2); }
+.stat-card.monthly-revenue { border-color: rgba(99, 102, 241, 0.3); background: linear-gradient(135deg, #141414 0%, rgba(99, 102, 241, 0.05) 100%); }
 .stat-icon { font-size: 28px; }
 .stat-info {
   display: flex;

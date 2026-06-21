@@ -20,15 +20,44 @@
   gap: 10px;
 }
 .topbar-logo {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+.topbar-brand-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .topbar-brand {
-  font-family: 'Orbitron', 'Outfit', sans-serif;
-  font-size: 14px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 800;
+  font-style: italic;
+  color: #ffffff;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: flex-start;
+  line-height: 1;
+}
+.topbar-tm {
+  font-size: 0.45em;
   font-weight: 600;
-  color: #fff;
+  margin-left: 3px;
+  font-style: normal;
+  color: #ffffff;
+}
+.topbar-tagline {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.55rem;
+  font-weight: 700;
+  font-style: italic;
+  color: #ffffff;
+  text-transform: capitalize;
+  letter-spacing: 0.05em;
+  text-align: right;
+  margin-top: 4px;
 }
 
 .topbar-right {
