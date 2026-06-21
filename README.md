@@ -2,9 +2,39 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.6.
 
-## Development server
+## Cloudflare Pages Local Development (Full-Stack)
 
-To start a local development server, run:
+Since this app uses Cloudflare Pages Functions (in the `functions/` directory) and a D1 Database, running a standard `ng serve` will only run the frontend without the backend API. 
+
+Follow these steps to run the full application locally with Wrangler and a local D1 database:
+
+### 1. Initialize the Local D1 Database
+First, set up and seed your local SQLite database using the provided SQL files:
+```bash
+npm run db:init
+```
+*This command executes `schema.sql`, `seed_catalog.sql`, and `seed_users.sql` on the local D1 database emulator (`.wrangler/state/v3/d1`).*
+
+### 2. Run the App with Live Reload
+Wrangler Pages Dev serves static files from the build output directory (`dist/edge-customs/browser`). To get live reloading for your code changes, you need to run the compiler and the dev server in parallel:
+
+*   **Terminal 1**: Start the Angular build in watch mode:
+    ```bash
+    npm run watch
+    ```
+    *This will compile the frontend and automatically recompile whenever you make changes.*
+
+*   **Terminal 2**: Start the Wrangler development server:
+    ```bash
+    npm run pages:dev
+    ```
+    *This starts the serverless backend functions, simulates the D1 database binding (`DB`), and serves the frontend on [http://localhost:8788/](http://localhost:8788/).*
+
+---
+
+## Frontend-Only Development
+
+If you only need to work on the UI styling and layout without requiring the backend APIs, you can run:
 
 ```bash
 ng serve
